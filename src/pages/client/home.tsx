@@ -1,14 +1,19 @@
 import MobileFilter from '@/components/client/book/mobile.filter';
-import { getBooksAPI, getCategoryAPI } from '@/services/api';
+import { getBooksAPI, getCategoryAPI, getNameCategoryAPI } from '@/services/api';
 import { FilterTwoTone, ReloadOutlined } from '@ant-design/icons';
+import { Carousel } from 'antd';
 import {
     Row, Col, Form, Checkbox, Divider, InputNumber,
     Button, Rate, Tabs, Pagination, Spin
 } from 'antd';
 import type { FormProps } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import 'styles/home.scss';
+import React from 'react';
+import { DownOutlined, SmileOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Space } from 'antd';
 
 type FieldType = {
     range: {
@@ -21,6 +26,7 @@ type FieldType = {
 
 const HomePage = () => {
     const [searchTerm] = useOutletContext() as any;
+
 
     const [listCategory, setListCategory] = useState<{
         label: string, value: string
@@ -35,10 +41,20 @@ const HomePage = () => {
     const [filter, setFilter] = useState<string>("");
     const [sortQuery, setSortQuery] = useState<string>("sort=-sold");
     const [showMobileFilter, setShowMobileFilter] = useState<boolean>(false);
+    const [nameCategory, setNameCategory] = useState<{ [key: string]: string[] }>({});
+
+
+
 
     const [form] = Form.useForm();
-
     const navigate = useNavigate();
+
+    const filteredBooks = useMemo(() => {
+        return listBook.filter((book) =>
+            book.mainText.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [searchTerm, listBook]); // ✅ Chỉ tính toán lại khi `searchTerm` hoặc `listBook` thay đổi
+
 
     useEffect(() => {
         const initCategory = async () => {
@@ -55,7 +71,7 @@ const HomePage = () => {
 
     useEffect(() => {
         fetchBook();
-    }, [current, pageSize, filter, sortQuery, searchTerm]);
+    }, [current, pageSize, filter, sortQuery]);
 
     const fetchBook = async () => {
         setIsLoading(true)
@@ -73,8 +89,8 @@ const HomePage = () => {
 
         const res = await getBooksAPI(query);
         if (res && res.data) {
-            setListBook(res.data.result);
-            setTotal(res.data.meta.total)
+            setListBook(res.data.items);
+            setTotal(res.data.meta.totalItems)
         }
         setIsLoading(false)
     }
@@ -146,6 +162,43 @@ const HomePage = () => {
     ];
 
 
+    const menuItems: MenuProps['items'] = [
+        {
+            key: '1',
+            label: 'Item 1',
+        },
+        {
+            key: '2',
+            label: 'Item 2',
+        },
+        {
+            key: '3',
+            label: 'Item 3',
+        },
+    ];
+
+    // Hàm lấy danh mục con của từng category riêng biệt
+    const showCategories = async (categoryName: string) => {
+
+        const query = `name=${categoryName}`;
+        const res = await getNameCategoryAPI(query);
+
+        setNameCategory(prevState => ({
+            ...prevState,
+            [categoryName]: res.data ?? []
+        }));
+    };
+
+
+    const contentStyle: React.CSSProperties = {
+        margin: 0,
+        height: '160px',
+        color: '#fff',
+        lineHeight: '160px',
+        textAlign: 'center',
+        background: '#364d79',
+    };
+
     return (
         <>
             <div style={{ background: '#efefef', padding: "20px 0" }}>
@@ -154,14 +207,10 @@ const HomePage = () => {
                         <Col md={4} sm={0} xs={0}>
                             <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
                                 <div style={{ display: 'flex', justifyContent: "space-between" }}>
-                                    <span> <FilterTwoTone />
-                                        <span style={{ fontWeight: 500 }}> Bộ lọc tìm kiếm</span>
+                                    <span>
+                                        <span style={{ fontWeight: 500 }}> Khám phá theo danh mục</span>
                                     </span>
-                                    <ReloadOutlined title="Reset" onClick={() => {
-                                        form.resetFields();
-                                        setFilter('');
-                                    }}
-                                    />
+
                                 </div>
                                 <Divider />
                                 <Form
@@ -171,93 +220,287 @@ const HomePage = () => {
                                 >
                                     <Form.Item
                                         name="category"
-                                        label="Danh mục sản phẩm"
                                         labelCol={{ span: 24 }}
                                     >
-                                        <Checkbox.Group>
-                                            <Row>
-                                                {listCategory?.map((item, index) => {
-                                                    return (
-                                                        <Col span={24} key={`index-${index}`} style={{ padding: '7px 0' }}>
-                                                            <Checkbox value={item.value} >
-                                                                {item.label}
-                                                            </Checkbox>
-                                                        </Col>
-                                                    )
-                                                })}
-                                            </Row>
-                                        </Checkbox.Group>
-                                    </Form.Item>
-                                    <Divider />
-                                    <Form.Item
-                                        label="Khoảng giá"
-                                        labelCol={{ span: 24 }}
-                                    >
-                                        <Row gutter={[10, 10]} style={{ width: "100%" }}>
-                                            <Col xl={11} md={24}>
-                                                <Form.Item name={["range", 'from']}>
-                                                    <InputNumber
-                                                        name='from'
-                                                        min={0}
-                                                        placeholder="đ TỪ"
-                                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                                        style={{ width: '100%' }}
-                                                    />
-                                                </Form.Item>
-                                            </Col>
-                                            <Col xl={2} md={0}>
-                                                <div > - </div>
-                                            </Col>
-                                            <Col xl={11} md={24}>
-                                                <Form.Item name={["range", 'to']}>
-                                                    <InputNumber
-                                                        name='to'
-                                                        min={0}
-                                                        placeholder="đ ĐẾN"
-                                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                                        style={{ width: '100%' }}
-                                                    />
-                                                </Form.Item>
-                                            </Col>
+                                        <Row>
+
+                                            {listCategory.map((item, index) => (
+                                                <Col span={24} key={`index-${index}`} style={{ padding: '7px 0' }}>
+                                                    <Row>
+                                                        {/* Phần Category cha */}
+                                                        <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                            <div style={{ fontWeight: 'bold' }}>{item.label}</div>
+
+                                                            <div
+                                                                style={{
+                                                                    display: 'inline-block',
+                                                                    padding: '5px',
+                                                                    borderRadius: '5px',
+                                                                    transition: 'background 0.3s ease-in-out',
+                                                                }}
+                                                                onMouseEnter={(e) => (e.currentTarget.style.background = '#00000020')}
+                                                                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                                                            >
+                                                                <a
+                                                                    onClick={(e) => {
+                                                                        e.preventDefault();
+                                                                        setNameCategory((prev) => {
+                                                                            const isOpen = prev[item.label]?.length > 0;
+                                                                            if (isOpen) {
+                                                                                const updatedState = { ...prev };
+                                                                                delete updatedState[item.label]; // Xóa danh mục con khỏi state
+                                                                                return updatedState;
+                                                                            } else {
+                                                                                showCategories(item.label);
+                                                                                return prev;
+                                                                            }
+                                                                        });
+                                                                    }}
+                                                                >
+                                                                    <Space>
+                                                                        <DownOutlined />
+                                                                    </Space>
+                                                                </a>
+
+                                                            </div>
+                                                        </div>
+                                                    </Row>
+
+
+                                                    {/* Phần hiển thị khi click vào */}
+                                                    {nameCategory[item.label] && nameCategory[item.label].length > 0 && (
+                                                        <div style={{ paddingLeft: '20px', fontSize: '14px', color: '#666', marginTop: '5px' }}>
+                                                            {nameCategory[item.label].map((subItem, subIndex) => (
+                                                                <div key={subIndex}>{subItem}</div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+
+                                                </Col>
+
+                                            ))}
+
+
                                         </Row>
-                                        <div>
-                                            <Button onClick={() => form.submit()}
-                                                style={{ width: "100%" }} type='primary'>Áp dụng</Button>
-                                        </div>
                                     </Form.Item>
-                                    <Divider />
-                                    <Form.Item
-                                        label="Đánh giá"
-                                        labelCol={{ span: 24 }}
-                                    >
-                                        <div>
-                                            <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text"></span>
-                                        </div>
-                                        <div>
-                                            <Rate value={4} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                        <div>
-                                            <Rate value={3} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                        <div>
-                                            <Rate value={2} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                        <div>
-                                            <Rate value={1} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                    </Form.Item>
+
                                 </Form>
                             </div>
                         </Col>
 
                         <Col md={20} xs={24} >
+
                             <Spin spinning={isLoading} tip="Loading...">
+
+                                <Row>
+                                    < div
+
+                                        style={{
+                                            width: '100%',
+                                            border: '1px solid white', // Viền màu xám nhẹ
+                                            borderRadius: '5px', // Bo góc 5px
+                                            backgroundColor: 'white',
+                                            padding: '20px 20px',
+                                            marginBottom: '20px', // Tạo khoảng cách giữa phần nền xám phía trên và nội dung bên dưới
+                                        }}>
+                                        <h1>Nhà Sách Tiki</h1>
+
+                                    </div>
+                                </Row>
+
+                                <Row>
+                                    < div
+
+                                        style={{
+
+                                            width: '100%',
+
+                                            marginBottom: '20px', // Tạo khoảng cách giữa phần nền xám phía trên và nội dung bên dưới
+                                        }}>
+                                        <Carousel arrows infinite={true}>
+                                            <div className="carousel-slide">
+                                                <img src="/images/slide1.png" alt="Slide 1" />
+                                                <img src="/images/slide2.png" alt="Slide 2" />
+                                            </div>
+                                            <div className="carousel-slide">
+                                                <img src="/images/slide3.png" alt="Slide 3" />
+                                                <img src="/images/slide4.png" alt="Slide 4" />
+                                            </div>
+                                            <div className="carousel-slide">
+                                                <img src="/images/slide5.png" alt="Slide 5" />
+                                                <img src="/images/slide6.png" alt="Slide 6" />
+                                            </div>
+                                            <div className="carousel-slide">
+                                                <img src="/images/slide7.png" alt="Slide 7" />
+                                                <img src="/images/slide8.png" alt="Slide 8" />
+                                            </div>
+                                        </Carousel>
+
+
+
+
+
+                                    </div>
+                                </Row>
+
+                                <Row>
+                                    <div
+                                        style={{
+                                            width: "100%",
+                                            border: "1px solid #eee",
+                                            borderRadius: "8px",
+                                            backgroundColor: "white",
+                                            padding: "15px",
+                                            marginBottom: "20px",
+                                        }}
+                                    >
+                                        <h3 style={{
+                                            fontWeight: "bold",
+                                            fontSize: "22px",
+                                            marginBottom: "20px",
+                                            textAlign: "left"
+                                        }}>
+                                            Khám phá theo danh mục
+                                        </h3>
+
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                gap: "20px",
+                                                flexWrap: "wrap",
+                                            }}
+                                        >
+                                            <div style={{ textAlign: "center" }}>
+                                                <div
+                                                    style={{
+                                                        width: "120px",
+                                                        height: "120px",
+                                                        borderRadius: "50%",
+                                                        backgroundColor: "#f5f5f5",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        overflow: "hidden",
+                                                        margin: "0 auto",
+                                                        border: "1px solid #f0f0f0"
+                                                    }}
+                                                >
+                                                    <img
+                                                        src="/images/dm1.jpg"
+                                                        alt="English Books"
+                                                        style={{ width: "80%", height: "80%", objectFit: "cover" }}
+                                                    />
+                                                </div>
+                                                <p style={{
+                                                    fontWeight: "normal",
+                                                    fontSize: "16px",
+                                                    marginTop: "10px"
+                                                }}>
+                                                    English Books
+                                                </p>
+                                            </div>
+
+                                            <div style={{ textAlign: "center" }}>
+                                                <div
+                                                    style={{
+                                                        width: "120px",
+                                                        height: "120px",
+                                                        borderRadius: "50%",
+                                                        backgroundColor: "#f5f5f5",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        overflow: "hidden",
+                                                        margin: "0 auto",
+                                                        border: "1px solid #f0f0f0"
+                                                    }}
+                                                >
+                                                    <img
+                                                        src="/images/dm2.jpg"
+
+                                                        alt="Sách tiếng Việt"
+                                                        style={{ width: "80%", height: "80%", objectFit: "cover" }}
+                                                    />
+                                                </div>
+                                                <p style={{
+                                                    fontWeight: "normal",
+                                                    fontSize: "16px",
+                                                    marginTop: "10px"
+                                                }}>
+                                                    Sách tiếng Việt
+                                                </p>
+                                            </div>
+
+                                            <div style={{ textAlign: "center" }}>
+                                                <div
+                                                    style={{
+                                                        width: "120px",
+                                                        height: "120px",
+                                                        borderRadius: "50%",
+                                                        backgroundColor: "#f5f5f5",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        overflow: "hidden",
+                                                        margin: "0 auto",
+                                                        border: "1px solid #f0f0f0"
+                                                    }}
+                                                >
+                                                    <img
+                                                        src="/images/dm3.jpg"
+
+                                                        alt="Văn phòng phẩm"
+                                                        style={{ width: "80%", height: "80%", objectFit: "cover" }}
+                                                    />
+                                                </div>
+                                                <p style={{
+                                                    fontWeight: "normal",
+                                                    fontSize: "16px",
+                                                    marginTop: "10px"
+                                                }}>
+                                                    Văn phòng phẩm
+                                                </p>
+                                            </div>
+
+                                            <div style={{ textAlign: "center" }}>
+                                                <div
+                                                    style={{
+                                                        width: "120px",
+                                                        height: "120px",
+                                                        borderRadius: "50%",
+                                                        backgroundColor: "#f5f5f5",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        overflow: "hidden",
+                                                        margin: "0 auto",
+                                                        border: "1px solid #f0f0f0"
+                                                    }}
+                                                >
+                                                    <img
+                                                        src="/images/dm4.jpg"
+
+                                                        alt="Quà lưu niệm"
+                                                        style={{ width: "80%", height: "80%", objectFit: "cover" }}
+                                                    />
+                                                </div>
+                                                <p style={{
+                                                    fontWeight: "normal",
+                                                    fontSize: "16px",
+                                                    marginTop: "10px"
+                                                }}>
+                                                    Quà lưu niệm
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Row>
+
+
+
                                 <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
+
                                     <Row >
                                         <Tabs
                                             defaultActiveKey="sort=-sold"
@@ -275,7 +518,7 @@ const HomePage = () => {
                                         </Col>
                                     </Row>
                                     <Row className='customize-row'>
-                                        {listBook?.map((item, index) => {
+                                        {filteredBooks?.map((item, index) => {
                                             return (
                                                 <div
                                                     onClick={() => navigate(`/book/${item._id}`)}

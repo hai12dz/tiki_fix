@@ -10,12 +10,12 @@ declare global {
 
     interface IModelPaginate<T> {
         meta: {
-            current: number;
-            pageSize: number;
-            pages: number;
-            total: number;
+            currentPage: number;  // Trang hiện tại
+            pageSize: number;     // Số item tối đa trên mỗi trang
+            totalPages: number;   // Tổng số trang
+            totalItems: number;   // Tổng số item trong database
         },
-        result: T[]
+        items: T[]
     }
 
     interface ILogin {

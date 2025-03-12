@@ -70,3 +70,22 @@
         }
     }
 }
+
+.carousel-slide {
+    display: flex !important;
+    /* Bắt buộc flex */
+    justify-content: center;
+    /* Căn giữa ảnh */
+    align-items: center;
+    gap: 10px;
+    /* Khoảng cách giữa ảnh */
+    width: 100%;
+}
+
+.carousel-slide img {
+    width: 50%;
+    /* Mỗi ảnh chiếm 50% chiều rộng của slide */
+    height: auto;
+    object-fit: contain;
+    /* Đảm bảo không méo ảnh */
+}

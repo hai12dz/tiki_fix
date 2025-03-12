@@ -11,17 +11,13 @@ import { useCurrentApp } from 'components/context/app.context';
 import { logoutAPI } from '@/services/api';
 import ManageAccount from '../client/account';
 import { isMobile } from 'react-device-detect';
+import { HomeOutlined, SmileOutlined } from '@ant-design/icons';
 
-interface Product {
-    id: number;
-    name: string;
-    image: string;
-}
+
 
 interface IProps {
     searchTerm: string;
     setSearchTerm: (v: string) => void;
-    products: Product[]; // ✅ Thêm danh sách sản phẩm vào props
 }
 
 const AppHeader = (props: IProps) => {
@@ -70,14 +66,6 @@ const AppHeader = (props: IProps) => {
 
     const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
 
-    // ✅ useMemo để tối ưu tìm kiếm sản phẩm
-    const filteredProducts = useMemo(() => {
-        console.log("🔍 props.products:", props.products); // Kiểm tra dữ liệu sản phẩm
-        console.log("🔍 searchTerm:", props.searchTerm);
-        return (props.products || []).filter(product =>
-            product.name.toLowerCase().includes(props.searchTerm.toLowerCase())
-        );
-    }, [props.searchTerm, props.products]);
 
 
     const contentPopover = () => (
@@ -125,20 +113,7 @@ const AppHeader = (props: IProps) => {
                                 value={props.searchTerm}
                                 onChange={(e) => props.setSearchTerm(e.target.value)}
                             />
-                            {props.searchTerm && (
-                                <div className="search-results">
-                                    {filteredProducts.length > 0 ? (
-                                        filteredProducts.map(product => (
-                                            <div key={product.id} className="search-item">
-                                                <img src={product.image} alt={product.name} />
-                                                <span>{product.name}</span>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <Empty description="Không tìm thấy sản phẩm" />
-                                    )}
-                                </div>
-                            )}
+
                         </div>
                     </div>
 
@@ -167,7 +142,17 @@ const AppHeader = (props: IProps) => {
                             <li className="navigation__item mobile"><Divider type='vertical' /></li>
                             <li className="navigation__item mobile">
                                 {!isAuthenticated ?
-                                    <span onClick={() => navigate('/login')}> Tài Khoản</span>
+                                    (<div >
+
+                                        <span
+                                            style={{ marginRight: '10px' }}
+                                            onClick={() => navigate('/')}><HomeOutlined /> Trang chủ</span>
+                                        <span onClick={() => navigate('/login')}><SmileOutlined /> Tài Khoản</span>
+
+
+                                    </div>
+
+                                    )
                                     :
                                     <Dropdown menu={{ items }} trigger={['click']}>
                                         <Space>

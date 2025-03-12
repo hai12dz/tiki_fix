@@ -202,3 +202,9 @@ export const getDashboardAPI = () => {
     }>>(urlBackend)
 }
 
+
+
+export const getNameCategoryAPI = (query: string) => {
+    const urlBackend = `/api/v1/database/name-category?${query}`;
+    return axios.get<IBackendRes<string[]>>(urlBackend)
+}

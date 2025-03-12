@@ -26,26 +26,33 @@ export const AppProvider = (props: TProps) => {
     const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
     const [carts, setCarts] = useState<ICart[]>([])
 
-    useEffect(() => {
-        const fetchAccount = async () => {
-            const res = await fetchAccountAPI();
-            const carts = localStorage.getItem("carts");
-            if (res.data) {
-                setUser(res.data.user);
-                setIsAuthenticated(true);
-                if (carts) {
-                    setCarts(JSON.parse(carts))
-                }
-            }
-            setIsAppLoading(false)
-        }
+    // useEffect(() => {
+    //     const fetchAccount = async () => {
+    //         const res = await fetchAccountAPI();
+    //         const carts = localStorage.getItem("carts");
+    //         if (res.data) {
+    //             setUser(res.data.user);
+    //             setIsAuthenticated(true);
+    //             if (carts) {
+    //                 setCarts(JSON.parse(carts))
+    //             }
+    //         }
+    //         setIsAppLoading(false)
+    //     }
 
-        fetchAccount();
-    }, [])
+    //     fetchAccount();
+    // }, [])
 
     return (
         <>
-            {isAppLoading === false ?
+            <CurrentAppContext.Provider value={{
+                isAuthenticated, user, setIsAuthenticated, setUser,
+                isAppLoading, setIsAppLoading,
+                carts, setCarts
+            }}>
+                {props.children}
+            </CurrentAppContext.Provider>
+            {/* {isAppLoading === false ?
                 <CurrentAppContext.Provider value={{
                     isAuthenticated, user, setIsAuthenticated, setUser,
                     isAppLoading, setIsAppLoading,
@@ -65,7 +72,7 @@ export const AppProvider = (props: TProps) => {
                         color="#36d6b4"
                     />
                 </div>
-            }
+            } */}
 
         </>
 
