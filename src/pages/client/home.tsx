@@ -1,6 +1,6 @@
 import MobileFilter from '@/components/client/book/mobile.filter';
-import { getBooksAPI, getCategoryAPI, getNameCategoryAPI } from '@/services/api';
-import { FilterTwoTone, ReloadOutlined } from '@ant-design/icons';
+import { getBooksAPI, getBrandsAPI, getCategoryAPI, getFullCategories, getNameCategoryAPI, getSuppliersAPI } from '@/services/api';
+import { FilterOutlined, FilterTwoTone, ReloadOutlined } from '@ant-design/icons';
 import { Carousel } from 'antd';
 import {
     Row, Col, Form, Checkbox, Divider, InputNumber,
@@ -14,6 +14,7 @@ import React from 'react';
 import { DownOutlined, SmileOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Space } from 'antd';
+import FilterProduct from './filter';
 
 type FieldType = {
     range: {
@@ -42,10 +43,12 @@ const HomePage = () => {
     const [sortQuery, setSortQuery] = useState<string>("sort=-sold");
     const [showMobileFilter, setShowMobileFilter] = useState<boolean>(false);
     const [nameCategory, setNameCategory] = useState<{ [key: string]: string[] }>({});
-
-
-
-
+    const [listBrand, setListBrand] = useState<IBrands[]>([])
+    const [listSupplier, setListSupplier] = useState<ISupplier[]>([])
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [queryFiler, setQueryFilter] = useState<string>("")
+    const [category, setCategory] = useState<string>("")
+    const [listFullCategory, setListFullCategory] = useState<ICategory[]>([])
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
@@ -69,6 +72,12 @@ const HomePage = () => {
         initCategory();
     }, []);
 
+    useEffect(() => {
+        // Add empty dependency array to prevent infinite rendering
+        fetchBrand();
+        fetchSupplier();
+        fetchFullCategories(); // This function was defined but never called
+    }, []);
     useEffect(() => {
         fetchBook();
     }, [current, pageSize, filter, sortQuery]);
@@ -94,6 +103,28 @@ const HomePage = () => {
         }
         setIsLoading(false)
     }
+
+
+    const fetchBrand = async () => {
+
+        const res = await getBrandsAPI();
+        setListBrand(res.data!)
+
+    }
+    const fetchSupplier = async () => {
+
+        const res = await getSuppliersAPI();
+        setListSupplier(res.data!)
+
+    }
+
+    const fetchFullCategories = async () => {
+        const res = await getFullCategories()
+
+        setListFullCategory(res.data!)
+
+    }
+
 
     const handleOnchangePage = (pagination: { current: number, pageSize: number }) => {
         if (pagination && pagination.current !== current) {
@@ -190,14 +221,6 @@ const HomePage = () => {
     };
 
 
-    const contentStyle: React.CSSProperties = {
-        margin: 0,
-        height: '160px',
-        color: '#fff',
-        lineHeight: '160px',
-        textAlign: 'center',
-        background: '#364d79',
-    };
 
     return (
         <>
@@ -371,132 +394,95 @@ const HomePage = () => {
                                                 flexWrap: "wrap",
                                             }}
                                         >
-                                            <div style={{ textAlign: "center" }}>
-                                                <div
-                                                    style={{
-                                                        width: "120px",
-                                                        height: "120px",
-                                                        borderRadius: "50%",
-                                                        backgroundColor: "#f5f5f5",
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        overflow: "hidden",
-                                                        margin: "0 auto",
-                                                        border: "1px solid #f0f0f0"
-                                                    }}
-                                                >
-                                                    <img
-                                                        src="/images/dm1.jpg"
-                                                        alt="English Books"
-                                                        style={{ width: "80%", height: "80%", objectFit: "cover" }}
-                                                    />
-                                                </div>
-                                                <p style={{
-                                                    fontWeight: "normal",
-                                                    fontSize: "16px",
-                                                    marginTop: "10px"
-                                                }}>
-                                                    English Books
-                                                </p>
-                                            </div>
+                                            {
 
-                                            <div style={{ textAlign: "center" }}>
-                                                <div
-                                                    style={{
-                                                        width: "120px",
-                                                        height: "120px",
-                                                        borderRadius: "50%",
-                                                        backgroundColor: "#f5f5f5",
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        overflow: "hidden",
-                                                        margin: "0 auto",
-                                                        border: "1px solid #f0f0f0"
-                                                    }}
-                                                >
-                                                    <img
-                                                        src="/images/dm2.jpg"
+                                                listFullCategory.map((items, index) => {
+                                                    return (
+                                                        <div key={index} style={{ textAlign: "center" }}>
+                                                            <div
+                                                                style={{
+                                                                    width: "120px",
+                                                                    height: "120px",
+                                                                    borderRadius: "50%",
+                                                                    backgroundColor: "#f5f5f5",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    overflow: "hidden",
+                                                                    margin: "0 auto",
+                                                                    border: "1px solid #f0f0f0"
+                                                                }}
+                                                            >
+                                                                <img onClick={() => { setCategory(items.name) }}
+                                                                    src={items.url}
+                                                                    alt="English Books"
+                                                                    style={{ width: "80%", height: "80%", objectFit: "cover" }}
+                                                                />
+                                                            </div>
+                                                            <p style={{
+                                                                fontWeight: "normal",
+                                                                fontSize: "16px",
+                                                                marginTop: "10px"
+                                                            }}>
+                                                                {items.name}
+                                                            </p>
+                                                        </div>
+                                                    );
+                                                })
 
-                                                        alt="Sách tiếng Việt"
-                                                        style={{ width: "80%", height: "80%", objectFit: "cover" }}
-                                                    />
-                                                </div>
-                                                <p style={{
-                                                    fontWeight: "normal",
-                                                    fontSize: "16px",
-                                                    marginTop: "10px"
-                                                }}>
-                                                    Sách tiếng Việt
-                                                </p>
-                                            </div>
 
-                                            <div style={{ textAlign: "center" }}>
-                                                <div
-                                                    style={{
-                                                        width: "120px",
-                                                        height: "120px",
-                                                        borderRadius: "50%",
-                                                        backgroundColor: "#f5f5f5",
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        overflow: "hidden",
-                                                        margin: "0 auto",
-                                                        border: "1px solid #f0f0f0"
-                                                    }}
-                                                >
-                                                    <img
-                                                        src="/images/dm3.jpg"
+                                            }
 
-                                                        alt="Văn phòng phẩm"
-                                                        style={{ width: "80%", height: "80%", objectFit: "cover" }}
-                                                    />
-                                                </div>
-                                                <p style={{
-                                                    fontWeight: "normal",
-                                                    fontSize: "16px",
-                                                    marginTop: "10px"
-                                                }}>
-                                                    Văn phòng phẩm
-                                                </p>
-                                            </div>
 
-                                            <div style={{ textAlign: "center" }}>
-                                                <div
-                                                    style={{
-                                                        width: "120px",
-                                                        height: "120px",
-                                                        borderRadius: "50%",
-                                                        backgroundColor: "#f5f5f5",
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        overflow: "hidden",
-                                                        margin: "0 auto",
-                                                        border: "1px solid #f0f0f0"
-                                                    }}
-                                                >
-                                                    <img
-                                                        src="/images/dm4.jpg"
-
-                                                        alt="Quà lưu niệm"
-                                                        style={{ width: "80%", height: "80%", objectFit: "cover" }}
-                                                    />
-                                                </div>
-                                                <p style={{
-                                                    fontWeight: "normal",
-                                                    fontSize: "16px",
-                                                    marginTop: "10px"
-                                                }}>
-                                                    Quà lưu niệm
-                                                </p>
-                                            </div>
                                         </div>
                                     </div>
                                 </Row>
 
+                                <Row>
+                                    < div
+
+                                        style={{
+                                            width: '100%',
+                                            border: '1px solid white', // Viền màu xám nhẹ
+                                            borderRadius: '5px', // Bo góc 5px
+                                            backgroundColor: 'white',
+                                            padding: '20px 20px',
+                                            marginBottom: '20px', // Tạo khoảng cách giữa phần nền xám phía trên và nội dung bên dưới
+                                        }}>
+                                        <h3>Tất cả sản phẩm</h3>
+                                        <div style={{ display: 'flex', gap: '5px' }}>
+                                            <div >
+                                                <p>Thương hiệu</p>
+                                                <div style={{ display: "flex", gap: "5px" }}>
+                                                    {listBrand.slice(0, 4).map((items, index) => (
+                                                        <Button key={index} style={{ border: "1px solid" }} type="text">
+                                                            {items.name}
+                                                        </Button>
+                                                    ))}
+                                                </div>
+
+                                            </div>
+                                            <div >
+                                                <p>Nhà cung cấp</p>
+                                                <div style={{ display: 'flex', gap: '5px' }}>
+                                                    {listSupplier.slice(0, 4).map((items, index) => (
+                                                        <Button key={index} style={{ border: "1px solid" }} type="text">
+                                                            {items.name}
+                                                        </Button>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div>
+
+                                                <Button onClick={() => { setIsModalOpen(true) }} style={{ border: '1px solid' }} type="text"> <FilterOutlined /> Tất cả</Button>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </Row>
 
 
                                 <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
@@ -563,6 +549,22 @@ const HomePage = () => {
                 listCategory={listCategory}
                 onFinish={onFinish}
             />
+
+
+            <FilterProduct
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                queryFiler={queryFiler}
+                setQueryFilter={setQueryFilter}
+                category={category}
+                setCategory={setCategory}
+                listBrand={listBrand}
+                listSupplier={listSupplier}
+
+            />
+
+
+
         </>
     )
 }

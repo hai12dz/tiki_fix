@@ -111,4 +111,45 @@ declare global {
 
     }
 
+
+
+
+
+
+
+
+    interface ISupplier {
+        id: string;
+        name: string,
+        contactInfo: string,
+        createdAt: Date;
+        updatedAt: Date;
+
+    }
+
+
+    interface IBrands {
+
+        id: string;
+        name: string,
+        logo: string,
+        createdAt: Date;
+        updatedAt: Date;
+
+
+    }
+
+
+
+
+
+    interface ICategory {
+        id: string;
+        name: string
+        url: string
+    }
+
+
+
 }
+

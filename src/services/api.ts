@@ -208,3 +208,40 @@ export const getNameCategoryAPI = (query: string) => {
     const urlBackend = `/api/v1/database/name-category?${query}`;
     return axios.get<IBackendRes<string[]>>(urlBackend)
 }
+
+
+
+export const getBrandsAPI = () => {
+    const urlBackend = `/api/v1/brand/name-brand`;
+    return axios.get<IBackendRes<IBrands[]>>(urlBackend)
+
+
+}
+
+export const getSuppliersAPI = () => {
+    const urlBackend = `/api/v1/suppliers/name-supplier`;
+    return axios.get<IBackendRes<ISupplier[]>>(urlBackend)
+
+
+}
+
+
+
+export const filterBookAPI = (query: string) => {
+    const urlBackend = `/api/v1/suppliers/filterBook/${query}`;
+    return axios.get<IBackendRes<IModelPaginate<IBookTable>>>(urlBackend)
+
+
+
+}
+
+
+
+export const getFullCategories = () => {
+
+    const urlBackend = `/api/v1/database/fullCategory`
+
+    return axios.get<IBackendRes<ICategory[]>>(urlBackend)
+
+
+}
