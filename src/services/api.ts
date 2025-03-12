@@ -231,17 +231,23 @@ export const filterBookAPI = (query: string) => {
     const urlBackend = `/api/v1/suppliers/filterBook/${query}`;
     return axios.get<IBackendRes<IModelPaginate<IBookTable>>>(urlBackend)
 
-
-
 }
 
 
 
 export const getFullCategories = () => {
-
     const urlBackend = `/api/v1/database/fullCategory`
-
     return axios.get<IBackendRes<ICategory[]>>(urlBackend)
 
 
 }
+
+
+
+
+export const filterBookWithFullInfoAPI = (query: string) => {
+    const urlBackend = `/api/v1/filterBook?${query}`;
+    return axios.get<IBackendRes<IModelPaginate<IBookTable>>>(urlBackend)
+
+}
+

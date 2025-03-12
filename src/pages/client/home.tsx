@@ -560,6 +560,9 @@ const HomePage = () => {
                 setCategory={setCategory}
                 listBrand={listBrand}
                 listSupplier={listSupplier}
+                pageSize={pageSize}
+                setListBook={setListBook}
+                setTotal={setTotal}
 
             />
 
