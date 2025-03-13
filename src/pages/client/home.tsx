@@ -1,6 +1,6 @@
 import MobileFilter from '@/components/client/book/mobile.filter';
 import { filterBookWithFullInfoAPI, getBooksAPI, getBrandsAPI, getCategoryAPI, getFullCategories, getNameCategoryAPI, getSuppliersAPI } from '@/services/api';
-import { FilterOutlined, FilterTwoTone, ReloadOutlined } from '@ant-design/icons';
+import { FilterOutlined, FilterTwoTone, ReloadOutlined, UpOutlined } from '@ant-design/icons';
 import { Carousel } from 'antd';
 import {
     Row, Col, Form, Checkbox, Divider, InputNumber,
@@ -75,6 +75,7 @@ const HomePage = () => {
 
     useEffect(() => {
         // Add empty dependency array to prevent infinite rendering
+
         fetchBrand();
         fetchSupplier();
         fetchFullCategories(); // This function was defined but never called
@@ -317,7 +318,7 @@ const HomePage = () => {
                                                                     }}
                                                                 >
                                                                     <Space>
-                                                                        <DownOutlined />
+                                                                        {nameCategory[item.label]?.length > 0 ? <UpOutlined /> : <DownOutlined />}
                                                                     </Space>
                                                                 </a>
 
@@ -330,7 +331,24 @@ const HomePage = () => {
                                                     {nameCategory[item.label] && nameCategory[item.label].length > 0 && (
                                                         <div style={{ paddingLeft: '20px', fontSize: '14px', color: '#666', marginTop: '5px' }}>
                                                             {nameCategory[item.label].map((subItem, subIndex) => (
-                                                                <div key={subIndex}>{subItem}</div>
+                                                                <div
+                                                                    key={subIndex}
+                                                                    style={{
+                                                                        padding: '5px 0',
+                                                                        cursor: 'pointer',
+                                                                        transition: 'all 0.3s ease'
+                                                                    }}
+                                                                    onMouseEnter={(e) => {
+                                                                        e.currentTarget.style.color = '#1890ff'; // Màu xanh
+                                                                        e.currentTarget.style.textDecoration = 'underline #1890ff'; // Gạch chân màu xanh
+                                                                    }}
+                                                                    onMouseLeave={(e) => {
+                                                                        e.currentTarget.style.color = '#666'; // Màu ban đầu
+                                                                        e.currentTarget.style.textDecoration = 'none'; // Bỏ gạch chân
+                                                                    }}
+                                                                >
+                                                                    {subItem}
+                                                                </div>
                                                             ))}
                                                         </div>
                                                     )}
@@ -668,13 +686,12 @@ const HomePage = () => {
                 setIsModalOpen={setIsModalOpen}
                 queryFiler={queryFiler}
                 setQueryFilter={setQueryFilter}
-                category={category}
-                setCategory={setCategory}
                 listBrand={listBrand}
                 listSupplier={listSupplier}
                 pageSize={pageSize}
                 setListBook={setListBook}
                 setTotal={setTotal}
+                listFullCategory={listFullCategory}
 
             />
 

@@ -1,30 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Col, Divider, Form, Input, InputNumber, Modal, Row } from 'antd';
-import { filterBookWithFullInfoAPI } from '@/services/api';
+import { filterBookWithFullInfoAPI, getFullCategories } from '@/services/api';
 
 interface IProps {
     isModalOpen: boolean,
     setIsModalOpen: (v: boolean) => void;
     queryFiler: string
     setQueryFilter: (v: string) => void
-    category: string
-    setCategory: (v: string) => void
     listBrand: IBrands[]
     listSupplier: ISupplier[]
     setListBook: (v: IBookTable[]) => void
     pageSize: number
     setTotal: (v: number) => void
+    listFullCategory: ICategory[]
 
 }
 
 const FilterProduct = (props: IProps) => {
-    const { isModalOpen, setIsModalOpen, category, listBrand, listSupplier, pageSize, setListBook, setTotal } = props;
+    const { isModalOpen, setIsModalOpen, listBrand, listSupplier, pageSize, setListBook, setTotal, listFullCategory } = props;
     const [brand, setBrand] = useState<string>("");
     const [supplier, setSupplier] = useState<string>("");
     const [showFullBrandList, setShowFullBrandList] = useState(false);
     const [showFullSupplierList, setShowFullSupplierList] = useState(false);
     const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
     const [selectedSuppliers, setSelectedSuppliers] = useState<string[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [category, setCategory] = useState<string>("")
+
+
     const [form] = Form.useForm();
 
     const handleOk = async (values: any) => {
@@ -37,7 +40,6 @@ const FilterProduct = (props: IProps) => {
 
         const minPrice = values.minPrice;
         const maxPrice = values.maxPrice;
-
         if (minPrice !== undefined) query += `&priceBottom=${minPrice}`;
         if (maxPrice !== undefined) query += `&priceTop=${maxPrice}`;
 
@@ -65,18 +67,24 @@ const FilterProduct = (props: IProps) => {
         form.setFieldsValue({ minPrice: min, maxPrice: max });
     };
 
-    const onChangeCheckBox = (type: "brand" | "supplier", name: string) => {
+    const onChangeCheckBox = (type: "brand" | "supplier" | "category", name: string) => {
         if (type === "brand") {
             setSelectedBrands(prev => {
                 const updatedBrands = prev.includes(name) ? prev.filter(item => item !== name) : [...prev, name];
                 setBrand(updatedBrands.join(",")); // Cập nhật giá trị chuỗi
                 return updatedBrands;
             });
-        } else {
+        } else if (type === "supplier") {
             setSelectedSuppliers(prev => {
                 const updatedSuppliers = prev.includes(name) ? prev.filter(item => item !== name) : [...prev, name];
                 setSupplier(updatedSuppliers.join(",")); // Cập nhật giá trị chuỗi
                 return updatedSuppliers;
+            });
+        } else if (type === "category") {
+            setSelectedCategories(prev => {
+                const updatedCategories = prev.includes(name) ? prev.filter(item => item !== name) : [...prev, name];
+                setCategory(updatedCategories.join(",")); // Cập nhật category filter
+                return updatedCategories;
             });
         }
     };
@@ -124,6 +132,23 @@ const FilterProduct = (props: IProps) => {
                 </Form>
             </div>
             <Divider />
+            <h3>Thể loại</h3>
+            <Row gutter={[16, 8]}>
+                {(showFullBrandList ? listFullCategory : listFullCategory.slice(0, 4)).map((items, index) => (
+                    <Col key={index} span={12}>
+                        <Checkbox onChange={() => onChangeCheckBox("category", items.name)} checked={selectedCategories.includes(items.name)}>
+                            {items.name}
+                        </Checkbox>
+                    </Col>
+                ))}
+            </Row>
+            {listBrand.length > 5 && (
+                <p onClick={() => setShowFullBrandList(!showFullBrandList)} style={{ color: "black", textDecoration: "underline", cursor: "pointer", marginTop: 10, marginBottom: 10 }}>
+                    {showFullBrandList ? "Thu gọn" : "Xem thêm"}
+                </p>
+            )}
+            <Divider />
+
             <h3>Thương hiệu</h3>
             <Row gutter={[16, 8]}>
                 {(showFullBrandList ? listBrand : listBrand.slice(0, 5)).map((items, index) => (
