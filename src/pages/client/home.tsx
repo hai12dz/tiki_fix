@@ -1,5 +1,5 @@
 import MobileFilter from '@/components/client/book/mobile.filter';
-import { getBooksAPI, getBrandsAPI, getCategoryAPI, getFullCategories, getNameCategoryAPI, getSuppliersAPI } from '@/services/api';
+import { filterBookWithFullInfoAPI, getBooksAPI, getBrandsAPI, getCategoryAPI, getFullCategories, getNameCategoryAPI, getSuppliersAPI } from '@/services/api';
 import { FilterOutlined, FilterTwoTone, ReloadOutlined } from '@ant-design/icons';
 import { Carousel } from 'antd';
 import {
@@ -221,7 +221,29 @@ const HomePage = () => {
     };
 
 
+    // First, remove the useEffect inside filterProduct - it's invalid there
+    const filterProduct = async () => {
+        let query = `current=1&pageSize=${pageSize}`;
+        if (category) query += `&nameCategory=${category}`;
 
+        const res = await filterBookWithFullInfoAPI(query);
+        setTotal(res.data?.items.length!)
+        setListBook(res.data?.items || []);
+
+        // Remove this useEffect - it's causing problems
+        // useEffect(() => {
+        //    if (category) {
+        //        filterProduct();
+        //    }
+        // }, [category]);
+    }
+
+    // Add this useEffect at the top level to handle category changes
+    useEffect(() => {
+        if (category) {
+            filterProduct();
+        }
+    }, [category]);
     return (
         <>
             <div style={{ background: '#efefef', padding: "20px 0" }}>
@@ -358,11 +380,6 @@ const HomePage = () => {
                                                 <img src="/images/slide8.png" alt="Slide 8" />
                                             </div>
                                         </Carousel>
-
-
-
-
-
                                     </div>
                                 </Row>
 
@@ -413,8 +430,17 @@ const HomePage = () => {
                                                                     border: "1px solid #f0f0f0"
                                                                 }}
                                                             >
-                                                                <img onClick={() => { setCategory(items.name) }}
-                                                                    src={items.url}
+                                                                <img onClick={() => {
+                                                                    // Chỉ cập nhật nếu chọn danh mục khác
+                                                                    if (category !== items.name) {
+                                                                        setCategory(items.name);
+                                                                        // Don't call filterProduct here, let the useEffect handle it
+                                                                    } else {
+                                                                        // Nếu click vào cùng danh mục, có thể reset về không có danh mục
+                                                                        setCategory("");
+                                                                        fetchBook(); // Gọi lại hàm fetchBook để lấy tất cả sản phẩm
+                                                                    }
+                                                                }} src={items.url}
                                                                     alt="English Books"
                                                                     style={{ width: "80%", height: "80%", objectFit: "cover" }}
                                                                 />
