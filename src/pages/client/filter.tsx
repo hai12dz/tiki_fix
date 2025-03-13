@@ -32,7 +32,7 @@ const FilterProduct = (props: IProps) => {
         let query = `current=1&pageSize=${pageSize}`;
 
         if (brand) query += `&brand=${brand}`;
-        if (category) query += `&category=${category}`;
+        if (category) query += `&nameCategory=${category}`;
         if (supplier) query += `&supplier=${supplier}`;
 
         const minPrice = values.minPrice;
@@ -44,7 +44,8 @@ const FilterProduct = (props: IProps) => {
         console.log("API Query:", query); // Debug query string trước khi gọi API
 
         const res = await filterBookWithFullInfoAPI(query);
-        setTotal(res.data?.items.length!)
+        setTotal(res.data!.meta.totalItems)
+
         setListBook(res.data?.items || []);
     };
 

@@ -89,3 +89,98 @@
     object-fit: contain;
     /* Đảm bảo không méo ảnh */
 }
+
+/* Add this to your styles/home.scss file */
+.filter-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.filter-section h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #242424;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: nowrap;
+    /* Thay đổi thành nowrap để không xuống dòng */
+    gap: 12px;
+    margin-bottom: 8px;
+    align-items: flex-end;
+    /* Căn chỉnh các phần tử xuống dưới */
+}
+
+.filter-category {
+    margin-right: 24px;
+}
+
+/* Thêm class mới cho nút 'Tất cả' */
+.filter-all-container {
+    display: flex;
+    align-items: flex-end;
+    /* Căn chỉnh xuống dưới cùng */
+    height: 100%;
+    /* Đảm bảo chiều cao phù hợp */
+    margin-top: auto;
+    /* Đẩy xuống dưới */
+}
+
+.filter-category p {
+    font-size: 13px;
+    color: #787878;
+    margin-bottom: 8px;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.filter-button {
+    border: 1px solid #ebebf0 !important;
+    border-radius: 4px !important;
+    padding: 4px 12px !important;
+    font-size: 13px !important;
+    color: #38383d !important;
+    background: white !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.filter-button:hover {
+    background-color: #f5f5fa !important;
+    border-color: #ebebf0 !important;
+}
+
+.filter-all-button {
+    border: 1px solid #ebebf0 !important;
+    border-radius: 4px !important;
+    padding: 4px 12px !important;
+    font-size: 13px !important;
+    color: #38383d !important;
+    background: white !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+
+
+/* Add this to your styles/home.scss file */
+
+.filter-button {
+    &.active-filter {
+        background-color: #1890ff;
+        color: white;
+    }
+
+    /* Optional: add hover effect for better UX */
+    &:hover {
+        opacity: 0.9;
+    }
+}

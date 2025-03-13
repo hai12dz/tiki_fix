@@ -51,7 +51,8 @@ const HomePage = () => {
     const [listFullCategory, setListFullCategory] = useState<ICategory[]>([])
     const [form] = Form.useForm();
     const navigate = useNavigate();
-
+    const [brand, setBrand] = useState<string>("");
+    const [supplier, setSupplier] = useState<string>("");
     const filteredBooks = useMemo(() => {
         return listBook.filter((book) =>
             book.mainText.toLowerCase().includes(searchTerm.toLowerCase())
@@ -221,29 +222,42 @@ const HomePage = () => {
     };
 
 
-    // First, remove the useEffect inside filterProduct - it's invalid there
     const filterProduct = async () => {
         let query = `current=1&pageSize=${pageSize}`;
-        if (category) query += `&nameCategory=${category}`;
+        let isChange: boolean = false;
 
-        const res = await filterBookWithFullInfoAPI(query);
-        setTotal(res.data?.items.length!)
-        setListBook(res.data?.items || []);
-
-        // Remove this useEffect - it's causing problems
-        // useEffect(() => {
-        //    if (category) {
-        //        filterProduct();
-        //    }
-        // }, [category]);
-    }
-
-    // Add this useEffect at the top level to handle category changes
-    useEffect(() => {
-        if (category) {
-            filterProduct();
+        // Only add parameters to query if they have values
+        if (category && category !== "") {
+            isChange = true;
+            query += `&nameCategory=${category}`;
         }
-    }, [category]);
+        if (brand && brand !== "") {
+            isChange = true;
+            query += `&nameBrand=${brand}`;
+        }
+        if (supplier && supplier !== "") {
+            isChange = true;
+            query += `&nameSupplier=${supplier}`;
+        }
+
+        // If any filter is applied, use the filter API
+        if (isChange === true) {
+            const res = await filterBookWithFullInfoAPI(query);
+            setTotal(res.data!.meta.totalItems)
+
+            setListBook(res.data?.items || []);
+        }
+        // If NO filters are applied, fetch all books
+        else {
+            await fetchBook(); // Make sure to await this
+        }
+    };
+
+    // Modify the useEffect to run when any filter changes
+    useEffect(() => {
+        // Always run filterProduct whether filters are set or reset
+        filterProduct();
+    }, [category, brand, supplier]);
     return (
         <>
             <div style={{ background: '#efefef', padding: "20px 0" }}>
@@ -430,20 +444,27 @@ const HomePage = () => {
                                                                     border: "1px solid #f0f0f0"
                                                                 }}
                                                             >
-                                                                <img onClick={() => {
-                                                                    // Chỉ cập nhật nếu chọn danh mục khác
-                                                                    if (category !== items.name) {
-                                                                        setCategory(items.name);
-                                                                        // Don't call filterProduct here, let the useEffect handle it
-                                                                    } else {
-                                                                        // Nếu click vào cùng danh mục, có thể reset về không có danh mục
-                                                                        setCategory("");
-                                                                        fetchBook(); // Gọi lại hàm fetchBook để lấy tất cả sản phẩm
-                                                                    }
-                                                                }} src={items.url}
+                                                                <img
+                                                                    onClick={() => {
+                                                                        if (category !== items.name) {
+                                                                            setCategory(items.name);
+                                                                        } else {
+
+                                                                        }
+                                                                    }}
+                                                                    src={items.url}
                                                                     alt="English Books"
-                                                                    style={{ width: "80%", height: "80%", objectFit: "cover" }}
+                                                                    style={{
+                                                                        width: "80%",
+                                                                        height: "80%",
+                                                                        objectFit: "cover",
+                                                                        transition: "transform 0.3s ease",
+                                                                        cursor: "pointer"
+                                                                    }}
+                                                                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+                                                                    onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
                                                                 />
+
                                                             </div>
                                                             <p style={{
                                                                 fontWeight: "normal",
@@ -475,38 +496,73 @@ const HomePage = () => {
                                             padding: '20px 20px',
                                             marginBottom: '20px', // Tạo khoảng cách giữa phần nền xám phía trên và nội dung bên dưới
                                         }}>
-                                        <h3>Tất cả sản phẩm</h3>
-                                        <div style={{ display: 'flex', gap: '5px' }}>
-                                            <div >
-                                                <p>Thương hiệu</p>
-                                                <div style={{ display: "flex", gap: "5px" }}>
-                                                    {listBrand.slice(0, 4).map((items, index) => (
-                                                        <Button key={index} style={{ border: "1px solid" }} type="text">
-                                                            {items.name}
+                                        <Row>
+                                            <div className="filter-section" style={{
+                                                width: '100%',
+                                                border: '1px solid white',
+                                                borderRadius: '5px',
+                                                backgroundColor: 'white',
+                                                padding: '20px 20px',
+                                                marginBottom: '20px',
+                                            }}>
+                                                <h3>Tất cả sản phẩm</h3>
+                                                <div className="filter-options">
+                                                    <div className="filter-category">
+                                                        <p>Thương hiệu</p>
+                                                        <div className="filter-buttons">
+                                                            {listBrand.slice(0, 4).map((items, index) => (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        if (brand !== items.name) {
+                                                                            setBrand(items.name);
+                                                                        } else {
+                                                                            setBrand(""); // This will trigger the useEffect
+                                                                        }
+                                                                    }}
+                                                                    key={index}
+                                                                    className={`filter-button ${brand === items.name ? 'active-filter' : ''}`}
+                                                                    type={brand === items.name ? "primary" : "text"}
+                                                                >
+                                                                    {items.name}
+                                                                </Button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="filter-category">
+                                                        <p>Nhà cung cấp</p>
+                                                        <div className="filter-buttons">
+                                                            {listSupplier.slice(0, 4).map((items, index) => (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        if (supplier !== items.name) {
+                                                                            setSupplier(items.name);
+                                                                        } else {
+                                                                            setSupplier(""); // This will trigger the useEffect
+                                                                        }
+                                                                    }}
+                                                                    key={index}
+                                                                    className={`filter-button ${supplier === items.name ? 'active-filter' : ''}`}
+                                                                    type={supplier === items.name ? "primary" : "text"}
+                                                                >
+                                                                    {items.name}
+                                                                </Button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="filter-all-container">
+                                                        <Button
+                                                            onClick={() => { setIsModalOpen(true) }}
+                                                            className="filter-all-button"
+                                                            type="text"
+                                                        >
+                                                            <FilterOutlined style={{ marginRight: '4px' }} /> Tất cả
                                                         </Button>
-                                                    ))}
-                                                </div>
-
-                                            </div>
-                                            <div >
-                                                <p>Nhà cung cấp</p>
-                                                <div style={{ display: 'flex', gap: '5px' }}>
-                                                    {listSupplier.slice(0, 4).map((items, index) => (
-                                                        <Button key={index} style={{ border: "1px solid" }} type="text">
-                                                            {items.name}
-                                                        </Button>
-                                                    ))}
+                                                    </div>
                                                 </div>
                                             </div>
-
-                                            <div>
-
-                                                <Button onClick={() => { setIsModalOpen(true) }} style={{ border: '1px solid' }} type="text"> <FilterOutlined /> Tất cả</Button>
-
-                                            </div>
-
-                                        </div>
-
+                                        </Row>
                                     </div>
                                 </Row>
 
@@ -529,28 +585,58 @@ const HomePage = () => {
                                             </div>
                                         </Col>
                                     </Row>
+
                                     <Row className='customize-row'>
-                                        {filteredBooks?.map((item, index) => {
-                                            return (
-                                                <div
-                                                    onClick={() => navigate(`/book/${item._id}`)}
-                                                    className="column" key={`book-${index}`}>
-                                                    <div className='wrapper'>
-                                                        <div className='thumbnail'>
-                                                            <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`} alt="thumbnail book" />
-                                                        </div>
-                                                        <div className='text' title={item.mainText}>{item.mainText}</div>
-                                                        <div className='price'>
-                                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item?.price ?? 0)}
-                                                        </div>
-                                                        <div className='rating'>
-                                                            <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 10 }} />
-                                                            <span>Đã bán {item?.sold ?? 0}</span>
+                                        {filteredBooks?.length > 0 ? (
+                                            filteredBooks.map((item, index) => {
+                                                return (
+                                                    <div
+                                                        onClick={() => navigate(`/book/${item._id}`)}
+                                                        className="column" key={`book-${index}`}>
+                                                        <div className='wrapper'>
+                                                            <div className='thumbnail'>
+                                                                <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`} alt="thumbnail book" />
+                                                            </div>
+                                                            <div className='text' title={item.mainText}>{item.mainText}</div>
+                                                            <div className='price'>
+                                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item?.price ?? 0)}
+                                                            </div>
+                                                            <div className='rating'>
+                                                                <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 10 }} />
+                                                                <span>Đã bán {item?.sold ?? 0}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                )
+                                            })
+                                        ) : (
+                                            <div style={{
+                                                width: '100%',
+                                                textAlign: 'center',
+                                                padding: '50px 0',
+                                                fontSize: '18px',
+                                                color: '#666',
+                                                border: '1px dashed #ddd',
+                                                borderRadius: '8px',
+                                                margin: '20px 0'
+                                            }}>
+                                                <div style={{ marginBottom: '15px' }}>
+                                                    <ReloadOutlined style={{ fontSize: '32px', color: '#999' }} />
                                                 </div>
-                                            )
-                                        })}
+                                                <p>Chúng tôi không có sản phẩm phù hợp</p>
+                                                <Button
+                                                    type="primary"
+                                                    onClick={() => {
+                                                        setCategory("");
+                                                        fetchBook();
+                                                    }}
+                                                    icon={<ReloadOutlined />}
+                                                    style={{ marginTop: '10px' }}
+                                                >
+                                                    Xem tất cả sản phẩm
+                                                </Button>
+                                            </div>
+                                        )}
                                     </Row>
                                     <div style={{ marginTop: 30 }}></div>
                                     <Row style={{ display: "flex", justifyContent: "center" }}>
