@@ -1,7 +1,7 @@
 import MobileFilter from '@/components/client/book/mobile.filter';
 import { filterBookWithFullInfoAPI, getBooksAPI, getBrandsAPI, getCategoryAPI, getFullCategories, getNameCategoryAPI, getSuppliersAPI } from '@/services/api';
 import { FilterOutlined, FilterTwoTone, ReloadOutlined, UpOutlined } from '@ant-design/icons';
-import { Carousel } from 'antd';
+import { Card, Carousel, Image } from 'antd';
 import {
     Row, Col, Form, Checkbox, Divider, InputNumber,
     Button, Rate, Tabs, Pagination, Spin
@@ -15,6 +15,10 @@ import { DownOutlined, SmileOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Space } from 'antd';
 import FilterProduct from './filter';
+import _ from "lodash";
+
+// Tạo số lượng ngẫu nhiên từ 1 đến tổng số sách
+
 
 type FieldType = {
     range: {
@@ -58,7 +62,10 @@ const HomePage = () => {
             book.mainText.toLowerCase().includes(searchTerm.toLowerCase())
         );
     }, [searchTerm, listBook]); // ✅ Chỉ tính toán lại khi `searchTerm` hoặc `listBook` thay đổi
+    const randomCount = Math.floor(Math.random() * listBook.length) + 1;
 
+    // Trộn ngẫu nhiên danh sách và lấy số lượng sản phẩm ngẫu nhiên
+    const randomBooks = _.shuffle(listBook).slice(0, randomCount);
 
     useEffect(() => {
         const initCategory = async () => {
@@ -363,7 +370,62 @@ const HomePage = () => {
 
                                 </Form>
                             </div>
+
+
+                            <div style={{ marginTop: '10px' }}>
+                                <div>
+                                    <Image
+                                        src="/images/qc1.png"
+                                        alt="QC1"
+                                        width="100%"
+                                        height="auto"
+                                        style={{ objectFit: "cover" }}
+                                    />
+
+                                </div>
+                                <Space direction="vertical" size={16}>
+                                    <Card style={{ width: 225 }} className="promo-card">
+                                        <div>
+                                            <img
+                                                className="card-image"
+                                                src="/images/qc2.png"
+                                                alt="Promotional book image"
+                                            />
+                                            <div className="card-content">
+                                                <div className="card-title">Top sách bán chạy</div>
+                                                <div className="card-sponsor">Tài trợ bởi</div>
+                                                <div className="card-sponsor-name">1980 Books Tại Tiki Trading</div>
+                                                <div className="card-offer">
+                                                    <span className="discount-badge">Giảm 35K</span>
+                                                    <Button type='primary'>Xem thêm</Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Card>
+
+                                    <Card style={{ width: 225 }} className="promo-card">
+                                        <div>
+                                            <img
+                                                className="card-image"
+                                                src="/images/qc3.png"
+                                                alt="Promotional book image"
+                                            />
+                                            <div className="card-content">
+                                                <div className="card-title">Bìa & Số Tay Đẹp</div>
+                                                <div className="card-sponsor">Tài trợ bởi</div>
+                                                <div className="card-sponsor-name">1980 Books Tại Tiki Trading</div>
+                                                <div className="card-offer">
+                                                    <Button type='primary'>Xem thêm</Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </Space>
+                            </div>
                         </Col>
+
+
+
 
                         <Col md={20} xs={24} >
 
@@ -668,7 +730,225 @@ const HomePage = () => {
                                     </Row>
                                 </div>
                             </Spin>
+
+                            <Row>
+                                <div style={{ width: '100%', marginTop: '30px', padding: '10px', background: 'white' }}>
+
+                                    <div>
+                                        <h2>Sản Phẩm Đề Xuất</h2>
+                                    </div>
+                                    <div style={{ marginTop: '30px' }}>
+                                        <Row className="customize-row">
+                                            {randomBooks.map((item, index) => (
+                                                <div
+                                                    onClick={() => navigate(`/book/${item._id}`)}
+                                                    className="column"
+                                                    key={`book-${index}`}
+                                                >
+                                                    <div className="wrapper">
+                                                        <div className="thumbnail">
+                                                            <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`} alt="thumbnail book" />
+                                                        </div>
+                                                        <div className="text" title={item.mainText}>{item.mainText}</div>
+                                                        <div className="price">
+                                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item?.price ?? 0)}
+                                                        </div>
+                                                        <div className="rating">
+                                                            <Rate value={5} disabled style={{ color: "#ffce3d", fontSize: 10 }} />
+                                                            <span>Đã bán {item?.sold ?? 0}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </Row>
+
+                                    </div>
+                                </div>
+
+                            </Row>
+
+
+
                         </Col>
+
+
+                    </Row>
+
+                    <Row gutter={[20, 20]}>
+
+                        <div>
+                            <Image
+                                style={{ width: "100%" }}
+                                src="/images/footer.png"
+                            />
+                        </div>
+
+
+                    </Row>
+                    <Row gutter={[20, 20]}>
+                        <div style={{
+                            width: '100%',
+                            backgroundColor: 'white',
+                            padding: '20px',
+                            marginBottom: '20px',
+                            borderRadius: '5px'
+                        }}>
+                            <h2 style={{ borderBottom: '1px solid #efefef', paddingBottom: '10px', fontSize: '22px', fontWeight: 'bold' }}>Thông Tin Danh Mục</h2>
+
+                            <div style={{ fontSize: '14px', lineHeight: '1.6', color: '#333' }}>
+                                <p>Nhà sách là một trong những địa điểm gắn liền với tuổi thơ của nhiều người. Nơi đây không chỉ cung cấp cho chúng ta một nguồn kho tàng tri thức quý giá mà còn bày bán rất nhiều món <a href="#" style={{ color: '#1890ff' }}>quà lưu niệm</a> đáng yêu cùng vô vàn món <a href="#" style={{ color: '#1890ff' }}>văn phòng phẩm</a> khác. Cùng Tiki tìm hiểu thêm những điều thú vị tại nhà sách qua bài viết dưới đây nhé.</p>
+
+                                <h3 style={{ fontSize: '18px', fontWeight: 'bold', margin: '20px 0 10px' }}>Nhà sách - Thế giới tri thức và tinh hoa nhân loại</h3>
+
+                                <p>Người ta thường nói "sách là một kho tàng vô giá" vì nó chứa đựng nhiều kiến thức bổ ích của nhân loại. Chính vì thế mà nhà sách, nơi được trưng bày hàng nghìn cuốn sách có thể nói là một thế giới tri thức và hội tụ đủ muôn vàng tinh hoa của các nền văn hóa khác nhau.</p>
+
+                                <p>Một vài địa điểm bán sách nổi tiếng và đã xuất hiện từ lâu như nhà sách Fahasa, nhà sách Nhã Nam chắc hẳn là nơi đã lưu giữ kỷ niệm tuổi thơ của nhiều người. Những nhà sách này không chỉ bán mới sách mà còn "bán" cả niềm vui, sự hạnh phúc cho nhiều em nhỏ ở tuổi cắp sách đến trường.</p>
+
+                                <p>Nơi đây có nhiều loại sách khác nhau với đa dạng lĩnh vực từ <a href="#" style={{ color: '#1890ff' }}>kinh tế</a>, văn hóa, nghệ thuật,...cho đến triết học hay <a href="#" style={{ color: '#1890ff' }}>công nghệ</a>. Thêm vào đó, những loại sách bao gồm các kiến thức về ẩm thực, <a href="#" style={{ color: '#1890ff' }}>gia đình</a> cũng có mặt tại đây. Đồng thời, các sách không chỉ dành cho người học sinh, sinh viên mà còn là thiên đường dành cho những ai ham học hỏi và say tìm đến kiến thức.</p>
+
+                                <p>Tham khảo thêm về: <a href="#" style={{ color: '#1890ff' }}>sách</a>, <a href="#" style={{ color: '#1890ff' }}>truyện One Piece</a>, <a href="#" style={{ color: '#1890ff' }}>Truyện One Punch Man</a>, <a href="#" style={{ color: '#1890ff' }}>Tokyo Revengers manga</a>, <a href="#" style={{ color: '#1890ff' }}>Kính Vạn Hoa Chết Chóc</a></p>
+
+                                <h3 style={{ fontSize: '18px', fontWeight: 'bold', margin: '20px 0 10px' }}>Tại sao nên chọn nhà sách Tiki?</h3>
+
+                                <p>Bên cạnh những nhà sách truyền thống như nhà sách Fahasa, nhà sách Nhã Nam, nhà sách Phương Nam,...Tiki sẽ là một lựa chọn mới mẻ và thú vị dành cho những ai có sở thích mua sách online. <a href="#" style={{ color: '#1890ff' }}>Nhà sách Tiki</a> sở hữu một kho tàng sách rộng lớn với đa dạng các loại sách khác nhau để các bạn có thể lựa chọn.</p>
+
+                                <ul style={{ paddingLeft: '20px', marginTop: '10px' }}>
+                                    <li style={{ marginBottom: '5px' }}>Thao tác mua và thanh toán đơn giản</li>
+                                </ul>
+
+                                <p>Nếu như những nhà sách truyền thống khiến các bạn thích thú vì có thể tận tay cầm những cuốn sách hay có được cảm giác thoải mái khi dạo vòng quanh những gian sách thì nhà sách trực tuyến Tiki sẽ mang đến cho các bạn sự thuận tiện khi mua sắm.</p>
+
+                                <p>Thay vì phải loay hoay đi khắp nơi để tìm được cuốn sách mình muốn mua, các bạn chỉ cần lên gian hàng sách trực tuyến Tiki gõ tên sách mình cần tìm là nó sẽ xuất hiện ngay. Thêm vào đó, việc thanh toán sau khi mua hàng cũng sẽ vô cùng nhanh chóng và không cần phải chen chúc xếp hàng để chờ đến lượt mình.</p>
+                            </div>
+                        </div>
+                        <div className='res-footerqq'>
+                            <Image
+                                src="/images/footerqq.png"
+                                alt="QC1"
+                                width="100%"
+                                height="auto"
+                            />
+                        </div>
+
+
+                        <div style={{
+                            width: '100%',
+                            backgroundColor: 'white',
+                            padding: '20px',
+                            marginBottom: '20px',
+                            borderRadius: '5px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1A94FF', margin: 0 }}>SÁCH HAY TIKI KHUYÊN ĐỌC</h2>
+                                <Button
+                                    type="primary"
+                                    style={{ backgroundColor: '#1A94FF', borderColor: '#1A94FF' }}
+                                    onClick={() => {
+                                        const contentElement = document.getElementById('book-recommendation-content');
+                                        const buttonElement = document.getElementById('toggle-content-button');
+
+                                        if (contentElement && buttonElement) {
+                                            if (contentElement.classList.contains('collapsed')) {
+                                                contentElement.classList.remove('collapsed');
+                                                contentElement.classList.add('expanded');
+                                                buttonElement.innerText = 'Thu gọn';
+                                            } else {
+                                                contentElement.classList.remove('expanded');
+                                                contentElement.classList.add('collapsed');
+                                                buttonElement.innerText = 'Xem thêm';
+                                            }
+                                        }
+                                    }}
+                                    id="toggle-content-button"
+                                >
+                                    Xem thêm
+                                </Button>
+                            </div>
+
+                            {/* Book display section */}
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', marginBottom: '30px' }}>
+                                {/* Book items */}
+                                {[1, 2, 3, 4].map((item) => (
+                                    <div key={item} style={{
+                                        width: 'calc(25% - 15px)',
+                                        minWidth: '200px',
+                                        textAlign: 'center',
+                                        transition: 'transform 0.3s',
+                                        cursor: 'pointer'
+                                    }}
+                                        onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                                        onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                    >
+                                        <div style={{
+                                            backgroundColor: '#F5F5FA',
+                                            padding: '15px',
+                                            borderRadius: '8px',
+                                            height: '280px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}>
+                                            <img
+                                                src={`/images/book-${item}.jpg`}
+                                                alt={`Sách hay ${item}`}
+                                                style={{
+                                                    height: '180px',
+                                                    objectFit: 'contain',
+                                                    marginBottom: '15px',
+                                                    boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                                                }}
+                                            />
+                                            <h4 style={{ fontSize: '16px', margin: '5px 0' }}>Sách hay {item}</h4>
+                                            <p style={{ color: '#FF424E', fontWeight: 'bold', margin: '5px 0' }}>
+                                                {(100000 + (item * 20000)).toLocaleString('vi-VN')}₫
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Text content section with expand/collapse functionality */}
+                            <div
+                                id="book-recommendation-content"
+                                className="collapsed"
+                                style={{
+                                    fontSize: '14px',
+                                    lineHeight: '1.6',
+                                    color: '#333',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    transition: 'max-height 0.5s ease'
+                                }}
+                            >
+                                <p>Nhà sách là một trong những địa điểm gắn liền với tuổi thơ của nhiều người. Nơi đây không chỉ cung cấp cho chúng ta một nguồn kho tàng tri thức quý giá mà còn bày bán rất nhiều món <a href="#" style={{ color: '#1890ff' }}>quà lưu niệm</a> đáng yêu cùng vô vàn món <a href="#" style={{ color: '#1890ff' }}>văn phòng phẩm</a> khác. Cùng Tiki tìm hiểu thêm những điều thú vị tại nhà sách qua bài viết dưới đây nhé.</p>
+
+                                <h3 style={{ fontSize: '18px', fontWeight: 'bold', margin: '20px 0 10px' }}>Nhà sách - Thế giới tri thức và tinh hoa nhân loại</h3>
+
+                                <p>Người ta thường nói "sách là một kho tàng vô giá" vì nó chứa đựng nhiều kiến thức bổ ích của nhân loại. Chính vì thế mà nhà sách, nơi được trưng bày hàng nghìn cuốn sách có thể nói là một thế giới tri thức và hội tụ đủ muôn vàng tinh hoa của các nền văn hóa khác nhau.</p>
+
+                                <p>Một vài địa điểm bán sách nổi tiếng và đã xuất hiện từ lâu như nhà sách Fahasa, nhà sách Nhã Nam chắc hẳn là nơi đã lưu giữ kỷ niệm tuổi thơ của nhiều người. Những nhà sách này không chỉ bán mới sách mà còn "bán" cả niềm vui, sự hạnh phúc cho nhiều em nhỏ ở tuổi cắp sách đến trường.</p>
+
+                                <p>Nơi đây có nhiều loại sách khác nhau với đa dạng lĩnh vực từ <a href="#" style={{ color: '#1890ff' }}>kinh tế</a>, văn hóa, nghệ thuật,...cho đến triết học hay <a href="#" style={{ color: '#1890ff' }}>công nghệ</a>. Thêm vào đó, những loại sách bao gồm các kiến thức về ẩm thực, <a href="#" style={{ color: '#1890ff' }}>gia đình</a> cũng có mặt tại đây. Đồng thời, các sách không chỉ dành cho người học sinh, sinh viên mà còn là thiên đường dành cho những ai ham học hỏi và say tìm đến kiến thức.</p>
+
+                                <p>Tham khảo thêm về: <a href="#" style={{ color: '#1890ff' }}>sách</a>, <a href="#" style={{ color: '#1890ff' }}>truyện One Piece</a>, <a href="#" style={{ color: '#1890ff' }}>Truyện One Punch Man</a>, <a href="#" style={{ color: '#1890ff' }}>Tokyo Revengers manga</a>, <a href="#" style={{ color: '#1890ff' }}>Kính Vạn Hoa Chết Chóc</a></p>
+
+                                <h3 style={{ fontSize: '18px', fontWeight: 'bold', margin: '20px 0 10px' }}>Tại sao nên chọn nhà sách Tiki?</h3>
+
+                                <p>Bên cạnh những nhà sách truyền thống như nhà sách Fahasa, nhà sách Nhã Nam, nhà sách Phương Nam,...Tiki sẽ là một lựa chọn mới mẻ và thú vị dành cho những ai có sở thích mua sách online. <a href="#" style={{ color: '#1890ff' }}>Nhà sách Tiki</a> sở hữu một kho tàng sách rộng lớn với đa dạng các loại sách khác nhau để các bạn có thể lựa chọn.</p>
+
+                                <ul style={{ paddingLeft: '20px', marginTop: '10px' }}>
+                                    <li style={{ marginBottom: '5px' }}>Thao tác mua và thanh toán đơn giản</li>
+                                </ul>
+
+                                <p>Nếu như những nhà sách truyền thống khiến các bạn thích thú vì có thể tận tay cầm những cuốn sách hay có được cảm giác thoải mái khi dạo vòng quanh những gian sách thì nhà sách trực tuyến Tiki sẽ mang đến cho các bạn sự thuận tiện khi mua sắm.</p>
+
+                                <p>Thay vì phải loay hoay đi khắp nơi để tìm được cuốn sách mình muốn mua, các bạn chỉ cần lên gian hàng sách trực tuyến Tiki gõ tên sách mình cần tìm là nó sẽ xuất hiện ngay. Thêm vào đó, việc thanh toán sau khi mua hàng cũng sẽ vô cùng nhanh chóng và không cần phải chen chúc xếp hàng để chờ đến lượt mình.</p>
+                            </div>
+                        </div>
+
+
                     </Row>
                 </div>
             </div>
