@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { FaReact } from 'react-icons/fa';
 import { FiShoppingCart } from 'react-icons/fi';
 import { VscSearchFuzzy } from 'react-icons/vsc';
@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router';
 import './app.header.scss';
 import { Link } from 'react-router-dom';
 import { useCurrentApp } from 'components/context/app.context';
-import { logoutAPI } from '@/services/api';
+import { getBooksAPI, logoutAPI } from '@/services/api';
 import ManageAccount from '../client/account';
 import { isMobile } from 'react-device-detect';
 import { HomeOutlined, SmileOutlined } from '@ant-design/icons';
@@ -23,6 +23,7 @@ interface IProps {
 const AppHeader = (props: IProps) => {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [openManageAccount, setOpenManageAccount] = useState<boolean>(false);
+    const [listBook, setListBook] = useState<IBookTable[]>([]);
 
     const {
         isAuthenticated, user, setUser, setIsAuthenticated,
@@ -56,6 +57,7 @@ const AppHeader = (props: IProps) => {
             key: 'logout',
         },
     ];
+
 
     if (user?.role === 'ADMIN') {
         items.unshift({
@@ -91,6 +93,19 @@ const AppHeader = (props: IProps) => {
         </div>
     );
 
+    const fetchBook = async () => {
+
+        const res = await getBooksAPI('');
+        if (res && res.data) {
+            setListBook(res.data.items)
+        }
+
+    }
+    useEffect(() => {
+
+        fetchBook()
+    })
+
     return (
         <>
             <div className='header-container'>
@@ -99,13 +114,14 @@ const AppHeader = (props: IProps) => {
                         <div className="page-header__toggle" onClick={() => setOpenDrawer(true)}>☰</div>
                         <div className='page-header__logo'>
                             <span className='logo' onClick={() => navigate('/')}>
-                                <FaReact className='rotate icon-react' />Hải Đào IT
+                                <FaReact className='rotate icon-react' />TIKI LEARN
                             </span>
                             <VscSearchFuzzy className='icon-search' />
                         </div>
 
                         {/* ✅ Ô tìm kiếm */}
                         <div className="search-container">
+                            <img src="/images/iconsearch.png" alt="" />
                             <input
                                 className="input-search"
                                 type={'text'}
@@ -115,6 +131,35 @@ const AppHeader = (props: IProps) => {
                             />
 
                         </div>
+
+                        <div>
+
+
+                            {listBook.slice(0, 5).map((item, index) => (
+
+                                <p>{item.author}</p>
+
+                            ))}
+
+
+                        </div>
+
+                        <div>
+                            <img src="/images/giaoden.png" alt="" />Giao đến: Q.Hoàn Kiếm, P.Hàng Trống, Hà Nội
+                        </div>
+
+                        <div>
+                            <p>Cam kết</p>
+                            <p><img src="/images/hangthat.png" alt="Hàng thật" />100% hàng thật</p>
+                            <p><img src="/images/freemoidon.png" alt="Free ship" />Freeship mọi đơn</p>
+                            <p><img src="/images/hoanhang.png" alt="Hoàn hàng" />Hoàn 200% nếu hàng giả</p>
+                            <p><img src="/images/doitra30ngay.png" alt="Hàng thật" />30 ngày đổi trả</p>
+                            <p><img src="/images/giaonhanh24h.png" alt="Hàng thật" />Giao nhanh 2h</p>
+                            <p><img src="/images/giasieure.png" alt="Hàng thật" />Giao nhanh 2h</p>
+
+
+                        </div>
+
                     </div>
 
                     <nav className="page-header__bottom">
