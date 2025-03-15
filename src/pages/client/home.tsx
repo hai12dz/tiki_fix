@@ -644,7 +644,7 @@ const HomePage = () => {
                                             filteredBooks.map((item, index) => {
                                                 return (
                                                     <div
-                                                        onClick={() => navigate(`/book/${item._id}`)}
+                                                        onClick={() => navigate(`/book/${item.id}`)}
                                                         className="column" key={`book-${index}`}>
                                                         <div className='wrapper'>
                                                             <div className='thumbnail'>
@@ -717,7 +717,7 @@ const HomePage = () => {
                                         <Row className="customize-row">
                                             {randomBooks.map((item, index) => (
                                                 <div
-                                                    onClick={() => navigate(`/book/${item._id}`)}
+                                                    onClick={() => navigate(`/book/${item.id}`)}
                                                     className="column"
                                                     key={`book-${index}`}
                                                 >
@@ -770,7 +770,7 @@ const HomePage = () => {
                             <div className="book-container">
                                 {/* Book items */}
                                 {listBook.slice(0, 4).map((item) => (
-                                    <div key={item._id} className="book-wrap">
+                                    <div key={item.id} className="book-wrap">
                                         <div className="book-item">
                                             <img
                                                 src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`}
@@ -926,7 +926,7 @@ const HomePage = () => {
                                     <List.Item >
                                         <div className="book-info">
                                             <span className="book-index">{index + 1}.</span>
-                                            <Link to={`/book/${book._id}`} className="book-title">
+                                            <Link to={`/book/${book.id}`} className="book-title">
                                                 {book.mainText}
                                             </Link>
                                         </div>

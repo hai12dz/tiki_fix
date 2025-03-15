@@ -7,6 +7,7 @@ import 'styles/book.scss';
 import ModalGallery from './modal.gallery';
 import { useCurrentApp } from '@/components/context/app.context';
 import { Link, useNavigate } from 'react-router-dom';
+import BookInfo from './book.info';
 
 interface IProps {
     currentBook: IBookTable | null;
@@ -157,14 +158,14 @@ const BookDetail = (props: IProps) => {
             const carts = JSON.parse(cartStorage) as ICart[];
 
             //check exist
-            let isExistIndex = carts.findIndex(c => c._id === currentBook?._id);
+            let isExistIndex = carts.findIndex(c => c._id === currentBook?.id);
             if (isExistIndex > -1) {
                 carts[isExistIndex].quantity =
                     carts[isExistIndex].quantity + currentQuantity;
             } else {
                 carts.push({
                     quantity: currentQuantity,
-                    _id: currentBook._id,
+                    _id: currentBook.id,
                     detail: currentBook
                 })
             }
@@ -176,7 +177,7 @@ const BookDetail = (props: IProps) => {
         } else {
             //create
             const data = [{
-                _id: currentBook?._id!,
+                _id: currentBook?.id!,
                 quantity: currentQuantity,
                 detail: currentBook!
             }]
@@ -207,9 +208,9 @@ const BookDetail = (props: IProps) => {
                         },
                     ]}
                 />
-                <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
+                <div style={{ padding: "10px", background: '#fff', borderRadius: 5 }}>
                     <Row gutter={[20, 20]}>
-                        <Col md={10} sm={0} xs={0}>
+                        <Col md={8} sm={0} xs={0}>
                             <ImageGallery
                                 ref={refGallery}
                                 items={imageGallery}
@@ -221,7 +222,15 @@ const BookDetail = (props: IProps) => {
                                 onClick={() => handleOnClickImage()}
                             />
                         </Col>
-                        <Col md={14} sm={24}>
+                        <Col md={8} sm={0} xs={0}>
+
+
+                            <BookInfo
+                                currentBook={currentBook}
+                            />
+
+                        </Col>
+                        <Col md={8} sm={24}>
                             <Col md={0} sm={24} xs={24}>
                                 <ImageGallery
                                     ref={refGallery}

@@ -68,7 +68,7 @@ declare global {
     }
 
     interface IBookTable {
-        _id: string;
+        id: string;
         thumbnail: string;
         slider: string[];
         mainText: string;
