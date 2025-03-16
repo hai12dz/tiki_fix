@@ -69,6 +69,7 @@ declare global {
 
     interface IBookTable {
         id: string;
+        promotion: number
         thumbnail: string;
         slider: string[];
         mainText: string;
@@ -79,6 +80,12 @@ declare global {
         category: string;
         createdAt: Date;
         updatedAt: Date;
+        supplier: ISupplierDto
+    }
+    interface ISupplierDto {
+        id: number;
+        name: string;
+        logo: string
     }
 
     interface ICart {

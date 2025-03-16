@@ -1,0 +1,109 @@
+.customize-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 10px;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.column {
+    width: calc(25% - 8px) !important;
+    /* 4 sản phẩm trên mỗi hàng */
+
+    @media screen and (max-width: 800px) {
+        width: calc(50% - 8px);
+        /* 2 sản phẩm trên mỗi hàng khi màn nhỏ hơn 800px */
+    }
+
+    @media screen and (max-width: 500px) {
+        width: 100%;
+        /* 1 sản phẩm mỗi dòng trên điện thoại nhỏ */
+    }
+}
+
+
+.price-text b {
+    font-weight: 500; // Giảm bớt độ đậm (Mặc định là 700)
+}
+
+
+.product-info {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+
+    h3 {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    .safe-shopping {
+        background-color: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        .guarantee-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+
+            .icon {
+                margin-right: 8px;
+                min-width: 24px;
+            }
+
+            .details-link {
+                margin-left: 5px;
+
+                a {
+                    color: #1890ff;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+
+    .product-details {
+        background-color: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 12px;
+
+            .detail-label {
+                color: #666;
+                width: 40%;
+            }
+
+            .detail-value {
+                width: 60%;
+                font-weight: 400;
+            }
+        }
+    }
+
+    .product-description {
+        background-color: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .faded-text {
+            color: #999;
+        }
+    }
+}

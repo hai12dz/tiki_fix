@@ -1,91 +1,196 @@
-import { Row, Col, Rate, Divider, Typography, Space, Tag } from 'antd';
-import { CheckCircleFilled } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { Row, Col, Space, Typography, Rate, Tag, Divider, Popover } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { getBooksAPI } from '@/services/api';
+import BookInDetail from './book.support';
 
+const { Text, Title, Paragraph } = Typography;
 interface IProps {
     currentBook: IBookTable | null;
 }
 
 const BookInfo = (props: IProps) => {
     const { currentBook } = props;
-    const { Text, Title, Paragraph } = Typography;
+    const [popoverVisible, setPopoverVisible] = useState(false);
 
-    return (
-        <div className="book-info-container">
-            <div className='author'>
-                Tác giả: <a href='#'>{currentBook?.author}</a>
-            </div>
-            <div className='title'>
-                <Title level={4}>{currentBook?.mainText}</Title>
-            </div>
-            <div className='rating'>
-                <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 12 }} />
-                <span className='sold'>
-                    <Divider type="vertical" />
-                    Đã bán {currentBook?.sold ?? 0}
-                </span>
-            </div>
+    // Calculate the discounted price
+    const originalPrice = Number(currentBook?.price) || 0;
+    const discountPercentage = Number(currentBook?.promotion) || 0;
+    const discountedPrice = originalPrice - (originalPrice * discountPercentage / 100);
 
-            <div className="book-details">
-                <Row className="detail-item">
-                    <Col span={8} className="detail-label">Nhà xuất bản:</Col>
-                    <Col span={16} className="detail-content">{currentBook?.category}</Col>
-                </Row>
-                <Row className="detail-item">
-                    <Col span={8} className="detail-label">Năm xuất bản:</Col>
-                    <Col span={16} className="detail-content">{currentBook?.updatedAt ? new Date(currentBook.updatedAt).getFullYear() : 'N/A'}</Col>
-                </Row>
-                <Row className="detail-item">
-                    <Col span={8} className="detail-label">Số trang:</Col>
-                    <Col span={16} className="detail-content">{Math.floor(Math.random() * 300) + 100}</Col>
-                </Row>
-                <Row className="detail-item">
-                    <Col span={8} className="detail-label">Kích thước:</Col>
-                    <Col span={16} className="detail-content">14 x 20.5 cm</Col>
-                </Row>
-                <Row className="detail-item">
-                    <Col span={8} className="detail-label">Loại bìa:</Col>
-                    <Col span={16} className="detail-content">Bìa mềm</Col>
-                </Row>
-                <Row className="detail-item">
-                    <Col span={8} className="detail-label">SKU:</Col>
-                    <Col span={16} className="detail-content">{currentBook?.id}</Col>
-                </Row>
-            </div>
+    // Content for the price info popover
+    const priceInfoContent = (
+        <div className="price-info-popup" style={{ width: '320px' }}>
+            <Row gutter={[0, 8]}>
+                <Col span={24}>
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                        <Row justify="space-between">
+                            <Col>Giá gốc</Col>
+                            <Col>{originalPrice.toLocaleString()}đ</Col>
+                        </Row>
+                        <Row justify="space-between">
+                            <Col>Giá bán</Col>
+                            <Col>{discountedPrice.toLocaleString()}đ</Col>
+                        </Row>
+                        <Row>
+                            <Col className="discount-info">Giá đã giảm trực tiếp từ nhà bán</Col>
+                        </Row>
 
-            <div className="book-warranty" style={{ marginTop: '20px' }}>
-                <div className="warranty-title" style={{ fontWeight: 'bold', marginBottom: '10px' }}>Chính sách đổi trả</div>
-                <div className="warranty-item">
-                    <CheckCircleFilled style={{ color: '#2dc258', marginRight: '8px' }} />
-                    <span>Đổi trả trong 30 ngày nếu sản phẩm lỗi</span>
-                </div>
-                <div className="warranty-item">
-                    <CheckCircleFilled style={{ color: '#2dc258', marginRight: '8px' }} />
-                    <span>Sản phẩm mới 100%</span>
-                </div>
-                <div className="warranty-item">
-                    <CheckCircleFilled style={{ color: '#2dc258', marginRight: '8px' }} />
-                    <span>Bảo hành chính hãng</span>
-                </div>
-            </div>
-
-            <div className="book-description" style={{ marginTop: '20px' }}>
-                <div className="description-title" style={{ fontWeight: 'bold', marginBottom: '10px' }}>Mô tả sản phẩm</div>
-                <Paragraph ellipsis={{ rows: 3, expandable: true, symbol: 'Xem thêm' }}>
-                    {`"${currentBook?.mainText}" là cuốn sách của tác giả ${currentBook?.author} được xuất bản bởi ${currentBook?.category}. Cuốn sách mang đến cho người đọc những trải nghiệm tuyệt vời với nội dung phong phú và ý nghĩa sâu sắc. Đây là một tác phẩm không thể bỏ qua cho những ai yêu thích văn học.`}
-                </Paragraph>
-            </div>
-
-            <div className="book-tags" style={{ marginTop: '20px' }}>
-                <Space size={[0, 8]} wrap>
-                    <Tag color="default">Sách hay</Tag>
-                    <Tag color="default">{currentBook?.category}</Tag>
-                    <Tag color="default">{currentBook?.author}</Tag>
-                    <Tag color="default">Bestseller</Tag>
-                </Space>
-            </div>
+                    </Space>
+                </Col>
+            </Row>
         </div>
     );
-}
+
+
+    return (
+        <div className="book-container p-4">
+            <Row gutter={[0, 12]}>
+                <Col span={24}>
+                    <Space className="space-container">
+                        <img
+                            style={{ width: '114px', height: '20px' }}
+                            src="/images/ctdoitra30ngay.png"
+                            alt=""
+                        />
+                        <img
+                            style={{ width: '114px', height: '20px' }}
+                            src="/images/ctchinhhang.png"
+                            alt=""
+                        />
+                        <Text type="secondary"><h5>Tác giả: <a href="#">{currentBook?.author}</a></h5></Text>
+                    </Space>
+                </Col>
+
+                <Col span={24}>
+                    <Title level={4} className="mb-1">{currentBook?.mainText}</Title>
+                </Col>
+
+                <Col span={24}>
+                    <Space align="center">
+                        <Rate disabled defaultValue={4.5} className="text-yellow-400 text-sm" />
+                        <Text>(1523)</Text>
+                        <Divider type="vertical" />
+                        <Text>Đã bán {currentBook?.sold}+</Text>
+                    </Space>
+                </Col>
+
+                <Col span={24}>
+                    <Space align="center">
+                        <Text strong className="text-red-500 text-2xl">
+                            <Text strong className="text-red-500 text-2xl">
+
+                                {Number(currentBook?.price) - (Number(currentBook?.price) * Number(currentBook?.promotion) / 100)}đ
+
+
+                            </Text>
+
+
+                        </Text>
+
+                        <Text delete className="text-gray-500">{currentBook?.price}đ</Text>
+                        <Tag color="#ffe4e4" className="rounded-md border-0">
+                            <Text className="text-red-500">-{currentBook?.promotion}%</Text>
+                        </Tag>
+                        <Popover
+                            content={priceInfoContent}
+                            title="Chi tiết giá"
+                            trigger="click"
+                            placement="bottomRight"
+                        >
+                            <InfoCircleOutlined
+                                className="text-gray-400 cursor-pointer"
+                                onClick={() => setPopoverVisible(!popoverVisible)}
+                            />
+                        </Popover>
+                    </Space>
+                </Col>
+
+                <Col span={24}>
+                    <Text className="text-gray-500">Giá sau áp dụng mã khuyến mãi</Text>
+                </Col>
+
+                <Col span={24}>
+                    <Space>
+                        <Tag color="#f0f7ff" className="rounded-md border-0">
+                            <Text className="text-blue-500">Giảm 10.000đ từ mã khuyến mãi của nhà bán</Text>
+                        </Tag>
+                    </Space>
+                </Col>
+
+                <Col span={24}>
+                    <Divider className="my-2" />
+                </Col>
+
+                <Col span={24}>
+                    <Title level={5} className="mb-1">Thông tin vận chuyển</Title>
+                </Col>
+
+                <Col span={24}>
+                    <Row>
+                        <Col span={18}>
+                            <Text>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội</Text>
+                        </Col>
+                        <Col span={6} className="text-right">
+                            <Text className="text-blue-500"><a href="#">Đổi</a>  </Text>
+                        </Col>
+                    </Row>
+                </Col>
+
+                <Col span={24} className="my-2">
+                    <Space align="center">
+                        <img style={{ width: '32px', height: '16px' }} src="/images/now.png" alt="" />
+                        <Text strong> Giao siêu tốc 2h</Text>
+                    </Space>
+                </Col>
+
+                <Col span={24}>
+                    <Space>
+                        <Text>Trước 17h hôm nay:</Text>
+                        <Text className="text-green-500">Miễn phí</Text>
+                        <Text delete>
+                            <span className="text-muted">15.000</span>
+                            <sup><small>đ</small></sup>
+                        </Text>
+
+                    </Space>
+                </Col>
+
+                <Col span={24} className="my-2">
+                    <Space align="center">
+                        <Text type="secondary" strong> <img style={{ width: '32px', height: '16px' }} src="/images/giaodungsangmai.png" alt="" /> Giao đúng sáng mai</Text>
+                    </Space>
+                </Col>
+
+                <Col span={24}>
+                    <Space>
+                        <Text>8h - 12h, Ngày mai:</Text>
+                        <Text className="text-green-500">Miễn phí</Text>
+                        <Text delete>
+                            <span className="text-muted">10.000</span>
+                            <sup><small>đ</small></sup>
+                        </Text>
+                    </Space>
+                </Col>
+
+                <Col span={24}>
+                    <Space>
+                        <Text strong> <img style={{ width: '32px', height: '16px' }} src="/images/freeship.png" alt="" /> Freeship 10k đơn từ 45k, Freeship 25k đơn từ 100k</Text>
+
+                    </Space>
+                </Col>
+
+                <Col span={24}>
+                    <Divider className="my-2" />
+                </Col>
+            </Row>
+
+            <Row>
+
+                <BookInDetail />
+            </Row>
+        </div>
+    );
+};
 
 export default BookInfo;

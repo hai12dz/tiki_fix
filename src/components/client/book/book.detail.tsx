@@ -1,13 +1,15 @@
 import { Row, Col, Rate, Divider, App, Breadcrumb } from 'antd';
 import ImageGallery from 'react-image-gallery';
 import { useEffect, useRef, useState } from 'react';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { MinusOutlined, PlusOutlined, StarFilled, StarOutlined } from '@ant-design/icons';
 import { BsCartPlus } from 'react-icons/bs';
 import 'styles/book.scss';
 import ModalGallery from './modal.gallery';
 import { useCurrentApp } from '@/components/context/app.context';
 import { Link, useNavigate } from 'react-router-dom';
 import BookInfo from './book.info';
+import { getSuppliersAPI } from '@/services/api';
+import BookInDetail from './book.support';
 
 interface IProps {
     currentBook: IBookTable | null;
@@ -33,63 +35,6 @@ const BookDetail = (props: IProps) => {
     const { setCarts, user } = useCurrentApp();
     const { message } = App.useApp();
     const navigate = useNavigate();
-
-    // const images = [
-    //     {
-    //         original: 'https://picsum.photos/id/1018/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1018/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1015/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1015/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1019/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1019/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1018/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1018/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1015/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1015/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1019/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1019/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1018/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1018/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1015/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1015/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    //     {
-    //         original: 'https://picsum.photos/id/1019/1000/600/',
-    //         thumbnail: 'https://picsum.photos/id/1019/250/150/',
-    //         originalClass: "original-image",
-    //         thumbnailClass: "thumbnail-image"
-    //     },
-    // ];
 
     useEffect(() => {
         if (currentBook) {
@@ -208,9 +153,9 @@ const BookDetail = (props: IProps) => {
                         },
                     ]}
                 />
-                <div style={{ padding: "10px", background: '#fff', borderRadius: 5 }}>
+                <div style={{ padding: "10px", background: '#fff', borderRadius: 5, position: 'relative' }}>
                     <Row gutter={[20, 20]}>
-                        <Col md={8} sm={0} xs={0}>
+                        <Col md={8} sm={0} xs={0} style={{ position: 'sticky', top: 20, height: 'fit-content' }}>
                             <ImageGallery
                                 ref={refGallery}
                                 items={imageGallery}
@@ -222,13 +167,10 @@ const BookDetail = (props: IProps) => {
                                 onClick={() => handleOnClickImage()}
                             />
                         </Col>
-                        <Col md={8} sm={0} xs={0}>
-
-
+                        <Col md={8} sm={0} xs={0} style={{ position: 'sticky', top: 20, height: 'fit-content' }}>
                             <BookInfo
                                 currentBook={currentBook}
                             />
-
                         </Col>
                         <Col md={8} sm={24}>
                             <Col md={0} sm={24} xs={24}>
@@ -242,46 +184,85 @@ const BookDetail = (props: IProps) => {
                                     showThumbnails={false}
                                 />
                             </Col>
+
                             <Col span={24}>
-                                <div className='author'>Tác giả: <a href='#'>{currentBook?.author}</a> </div>
-                                <div className='title'>{currentBook?.mainText}</div>
-                                <div className='rating'>
-                                    <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 12 }} />
-                                    <span className='sold'>
-                                        <Divider type="vertical" />
-                                        Đã bán {currentBook?.sold ?? 0}</span>
-                                </div>
-                                <div className='price'>
-                                    <span className='currency'>
-                                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(currentBook?.price ?? 0)}
-                                    </span>
-                                </div>
-                                <div className='delivery'>
-                                    <div>
-                                        <span className='left'>Vận chuyển</span>
-                                        <span className='right'>Miễn phí vận chuyển</span>
+                                <Row gutter={[8, 0]}> {/* 16px khoảng cách ngang, 0px dọc */}
+                                    <Col >
+                                        <div>
+                                            <img style={{ width: '40px', height: '40px' }} src={`/images/${currentBook?.supplier?.logo}`} alt="" />
+                                        </div>
+                                    </Col>
+                                    <Col>
+                                        <Row
+                                            style={{ marginBottom: '2px' }}
+                                        >{currentBook?.supplier.name} </Row>
+                                        <Row>
+                                            <img style={{ width: '72px', height: '20px' }} src="/images/official.png" alt="" />&nbsp; | 4.7 &nbsp; <StarFilled style={{ color: "gold" }} />
+                                            &nbsp; (5,5tr+ đánh giá)
+
+                                        </Row>
+                                    </Col>
+                                </Row>
+                                <Divider />
+                                <Row>
+                                    <Col md={24}>
+                                        <div className='quantity'>
+                                            <span className='left'>Số lượng</span>
+                                            <span className='right'>
+                                                <button onClick={() => handleChangeButton('MINUS')} ><MinusOutlined /></button>
+                                                <input onChange={(event) => handleChangeInput(event.target.value)} value={currentQuantity} />
+                                                <button onClick={() => handleChangeButton('PLUS')}><PlusOutlined /></button>
+                                            </span>
+                                        </div>
+                                    </Col>
+                                    <Col md={24}>
+                                        <div>
+                                            Tạm tính
+                                        </div>
+
+                                        <div className='price'>
+
+                                            <span className='currency'>
+                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+                                                    Number(currentBook?.price || 0) - (Number(currentBook?.price || 0) * Number(currentBook?.promotion || 0) / 100)
+                                                )}
+
+
+                                            </span>
+                                        </div>
+                                    </Col>
+                                    <Col>
+                                        <div className='delivery'>
+                                            <div>
+                                                <span className='left'>Vận chuyển</span>
+                                                <span className='right'>Miễn phí vận chuyển</span>
+                                            </div>
+                                        </div>
+                                    </Col>
+
+
+
+                                    <div className='buy'>
+                                        <button className='cart' onClick={() => handleAddToCart()}>
+                                            <BsCartPlus className='icon-cart' />
+                                            <span>Thêm vào giỏ hàng</span>
+                                        </button>
+                                        <button
+                                            onClick={() => handleAddToCart(true)}
+                                            className='now'>Mua ngay</button>
                                     </div>
-                                </div>
-                                <div className='quantity'>
-                                    <span className='left'>Số lượng</span>
-                                    <span className='right'>
-                                        <button onClick={() => handleChangeButton('MINUS')} ><MinusOutlined /></button>
-                                        <input onChange={(event) => handleChangeInput(event.target.value)} value={currentQuantity} />
-                                        <button onClick={() => handleChangeButton('PLUS')}><PlusOutlined /></button>
-                                    </span>
-                                </div>
-                                <div className='buy'>
-                                    <button className='cart' onClick={() => handleAddToCart()}>
-                                        <BsCartPlus className='icon-cart' />
-                                        <span>Thêm vào giỏ hàng</span>
-                                    </button>
-                                    <button
-                                        onClick={() => handleAddToCart(true)}
-                                        className='now'>Mua ngay</button>
-                                </div>
+
+                                </Row>
+
+
                             </Col>
                         </Col>
                     </Row>
+                </div>
+
+                {/* Add the BookInDetail component below */}
+                <div style={{ marginTop: '20px', padding: '10px', background: '#fff', borderRadius: 5 }}>
+                    <BookInDetail />
                 </div>
             </div>
             <ModalGallery
