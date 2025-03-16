@@ -41,15 +41,15 @@ const BookInDetail = () => {
     }
 
     return (
-        <div className="homepage-container">
-            <div className="customize-row">
+        <div className="homepage-container-book">
+            <div className="customize-row-book">
                 {listBook.map((item, index) => (
                     <div
                         onClick={() => navigate(`/book/${item.id}`)}
-                        className="column"
+                        className="column-book"
                         key={`book-${index}`}
                     >
-                        <div className="wrapper">
+                        <div className="wrapper-book">
                             <div className="thumbnail">
                                 <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`} alt={item.mainText} />
                             </div>
