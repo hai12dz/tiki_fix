@@ -2,10 +2,10 @@ import { getBooksAPI } from "@/services/api";
 import { Pagination, Rate } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import 'styles/booksp.scss';
+import 'styles/bookslist.scss';
 import ExpandableDescription from "./ExpandableDescription";
 
-const BookInDetail = () => {
+const BookList = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(8);
@@ -41,12 +41,12 @@ const BookInDetail = () => {
     }
 
     return (
-        <div className="homepage-container">
-            <div className="customize-row">
+        <div className="booklist-container">
+            <div className="book-grid">
                 {listBook.map((item, index) => (
                     <div
                         onClick={() => navigate(`/book/${item.id}`)}
-                        className="column"
+                        className="book-item"
                         key={`book-${index}`}
                     >
                         <div className="wrapper">
@@ -144,4 +144,4 @@ const BookInDetail = () => {
     )
 }
 
-export default BookInDetail;
+export default BookList;

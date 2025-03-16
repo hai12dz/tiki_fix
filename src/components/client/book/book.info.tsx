@@ -44,7 +44,11 @@ const BookInfo = (props: IProps) => {
 
 
     return (
-        <div className="book-container p-4">
+        <div
+            style={{
+                border: '1px solid red' // Kiểm tra khung từng sản phẩm
+            }}
+            className="book-container p-4">
             <Row gutter={[0, 12]}>
                 <Col span={24}>
                     <Space className="space-container">
@@ -186,7 +190,6 @@ const BookInfo = (props: IProps) => {
             </Row>
 
             <Row>
-
                 <BookInDetail />
             </Row>
         </div>
