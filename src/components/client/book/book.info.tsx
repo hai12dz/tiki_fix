@@ -3,6 +3,7 @@ import { Row, Col, Space, Typography, Rate, Tag, Divider, Popover } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { getBooksAPI } from '@/services/api';
 import BookInDetail from './book.support';
+import LocationSelectorModal from './location.selector.modal';
 
 const { Text, Title, Paragraph } = Typography;
 interface IProps {
@@ -17,6 +18,21 @@ const BookInfo = (props: IProps) => {
     const originalPrice = Number(currentBook?.price) || 0;
     const discountPercentage = Number(currentBook?.promotion) || 0;
     const discountedPrice = originalPrice - (originalPrice * discountPercentage / 100);
+
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [deliveryLocation, setDeliveryLocation] = useState<string>('Hàng Trống, Q. Hoàn Kiếm, Hà Nội');
+    const handleLocationSubmit = (location: any) => {
+        setDeliveryLocation(location);
+    };
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+
 
     // Content for the price info popover
     const priceInfoContent = (
@@ -129,11 +145,26 @@ const BookInfo = (props: IProps) => {
                 <Col span={24}>
                     <Row>
                         <Col span={18}>
-                            <Text>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội</Text>
+                            <div>
+                                <Row>
+                                    <Col span={18}>
+                                        <Text>Giao đến {deliveryLocation}</Text>
+                                    </Col>
+                                    <Col span={6} style={{ textAlign: 'right' }}>
+                                        <Text style={{ color: '#1890ff' }}>
+                                            <a href="#" onClick={handleOpenModal}>Đổi</a>
+                                        </Text>
+                                    </Col>
+                                </Row>
+
+                                <LocationSelectorModal
+                                    isOpen={isModalOpen}
+                                    onClose={handleCloseModal}
+                                    onSubmitLocation={handleLocationSubmit}
+                                />
+                            </div>
                         </Col>
-                        <Col span={6} className="text-right">
-                            <Text className="text-blue-500"><a href="#">Đổi</a>  </Text>
-                        </Col>
+
                     </Row>
                 </Col>
 
@@ -187,7 +218,9 @@ const BookInfo = (props: IProps) => {
 
             <Row>
 
-                <BookInDetail />
+                <BookInDetail
+                    currentBook={currentBook}
+                />
             </Row>
         </div>
     );

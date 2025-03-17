@@ -251,3 +251,16 @@ export const filterBookWithFullInfoAPI = (query: string) => {
 
 }
 
+
+export const fetchViewedProductsAPI = (viewedProducts: any) => {
+    const urlBackend = `/api/v1/viewed`;
+    return axios.post<IBackendRes<IBookTable[]>>(urlBackend,
+        {
+            productIds: viewedProducts,
+        }
+
+    )
+
+}
+
+

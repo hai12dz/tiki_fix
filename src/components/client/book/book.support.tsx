@@ -4,8 +4,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import 'styles/booksp.scss';
 import ExpandableDescription from "./ExpandableDescription";
+interface IProps {
+    currentBook: IBookTable | null;
+}
 
-const BookInDetail = () => {
+
+const BookInDetail = (props: IProps) => {
+    const { currentBook } = props
     const [isLoading, setIsLoading] = useState(false);
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(8);
@@ -73,7 +78,7 @@ const BookInDetail = () => {
                 ))}
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'center' }}>
                 <Pagination
                     current={current}
                     total={total}
@@ -109,11 +114,19 @@ const BookInDetail = () => {
                     </div>
                     <div className="detail-row">
                         <div className="detail-label">Công ty phát hành</div>
-                        <div className="detail-value">1980 Books</div>
+                        <div className="detail-value">{currentBook?.supplier.name}</div>
                     </div>
                     <div className="detail-row">
                         <div className="detail-label">Ngày xuất bản</div>
-                        <div className="detail-value">2024-06-01 00:00:00</div>
+                        <div className="detail-value">
+                            {currentBook?.createdAt
+                                ? new Date(currentBook.createdAt).toLocaleString("vi-VN", {
+                                    timeZone: "Asia/Ho_Chi_Minh",
+                                })
+                                : "N/A"}
+                        </div>
+
+
                     </div>
                     <div className="detail-row">
                         <div className="detail-label">Kích thước</div>
@@ -121,7 +134,7 @@ const BookInDetail = () => {
                     </div>
                     <div className="detail-row">
                         <div className="detail-label">Dịch Giả</div>
-                        <div className="detail-value">Trương Anh Tuấn</div>
+                        <div className="detail-value">{currentBook?.author}</div>
                     </div>
                     <div className="detail-row">
                         <div className="detail-label">Loại bìa</div>

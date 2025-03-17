@@ -8,8 +8,11 @@ import ModalGallery from './modal.gallery';
 import { useCurrentApp } from '@/components/context/app.context';
 import { Link, useNavigate } from 'react-router-dom';
 import BookInfo from './book.info';
-import { getSuppliersAPI } from '@/services/api';
+import { fetchViewedProductsAPI, getSuppliersAPI } from '@/services/api';
 import BookInDetail from './book.support';
+import CustomerReview from './CustomerReview';
+import ProductSeen from './product.seen';
+import RecommendBook from './book.recommended';
 
 interface IProps {
     currentBook: IBookTable | null;
@@ -35,6 +38,25 @@ const BookDetail = (props: IProps) => {
     const { setCarts, user } = useCurrentApp();
     const { message } = App.useApp();
     const navigate = useNavigate();
+    const [listBookViewed, setListBookViewd] = useState<IBookTable[]>([])
+
+
+    useEffect(() => {
+        fetchViewedProducts()
+    }, [])
+
+    const fetchViewedProducts = async () => {
+        const viewedProducts = JSON.parse(localStorage.getItem("viewedProducts") || "[]");
+
+        if (viewedProducts.length > 0) {
+            try {
+                const response = await fetchViewedProductsAPI(viewedProducts)
+                setListBookViewd(response.data!)
+            } catch (error) {
+                console.error("Lỗi khi fetch sản phẩm đã xem:", error);
+            }
+        }
+    };
 
     useEffect(() => {
         if (currentBook) {
@@ -153,9 +175,12 @@ const BookDetail = (props: IProps) => {
                         },
                     ]}
                 />
-                <div style={{ padding: "10px", background: '#fff', borderRadius: 5, position: 'relative' }}>
+
+                <div style={{ padding: "10px", borderRadius: 5, position: 'relative' }}>
                     <Row gutter={[20, 20]}>
-                        <Col md={8} sm={0} xs={0} style={{ position: 'sticky', top: 20, height: 'fit-content' }}>
+                        <Col
+
+                            md={8} sm={0} xs={0} style={{ marginRight: '10px', position: 'sticky', top: 20, height: 'fit-content', background: '#fff', }}>
                             <ImageGallery
                                 ref={refGallery}
                                 items={imageGallery}
@@ -167,12 +192,14 @@ const BookDetail = (props: IProps) => {
                                 onClick={() => handleOnClickImage()}
                             />
                         </Col>
-                        <Col md={8} sm={0} xs={0} style={{ position: 'sticky', top: 20, height: 'fit-content' }}>
+                        <Col md={8} sm={0} xs={0} style={{ position: 'sticky', top: 20, height: 'fit-content', background: '#fff', }}>
                             <BookInfo
                                 currentBook={currentBook}
                             />
                         </Col>
-                        <Col md={8} sm={24}>
+
+                        <Col md={7} sm={24}   >
+
                             <Col md={0} sm={24} xs={24}>
                                 <ImageGallery
                                     ref={refGallery}
@@ -185,7 +212,18 @@ const BookDetail = (props: IProps) => {
                                 />
                             </Col>
 
-                            <Col span={24}>
+                            <Col span={24}
+                                style={{
+                                    position: 'sticky',
+                                    top: 20,
+                                    height: 'fit-content',
+                                    background: '#fff',
+                                }}
+
+                            >
+
+
+
                                 <Row gutter={[8, 0]}> {/* 16px khoảng cách ngang, 0px dọc */}
                                     <Col >
                                         <div>
@@ -256,14 +294,55 @@ const BookDetail = (props: IProps) => {
 
 
                             </Col>
+
                         </Col>
+
+                    </Row>
+                    <Row gutter={[20, 20]}>
+                        <Col md={16} sm={0} xs={0}>
+
+
+                            <CustomerReview />
+
+                        </Col>
+
+
                     </Row>
                 </div>
 
-                {/* Add the BookInDetail component below */}
-                <div style={{ marginTop: '20px', padding: '10px', background: '#fff', borderRadius: 5 }}>
-                    <BookInDetail />
+
+
+                <div style={{ marginTop: '20px', borderRadius: 5 }}>
+                    <Row gutter={[20, 20]}>
+                        <Col md={24} sm={0} xs={0}>
+
+                            <ProductSeen
+                                listBookViewed={listBookViewed}
+                            />
+
+                        </Col>
+
+
+                    </Row>
+
+
                 </div>
+
+
+                <div style={{ marginTop: '20px', borderRadius: 5 }}>
+                    <Row gutter={[20, 20]}>
+                        <Col md={24} sm={0} xs={0}>
+
+                            <RecommendBook />
+
+                        </Col>
+
+
+                    </Row>
+
+
+                </div>
+
             </div>
             <ModalGallery
                 isOpen={isOpenModalGallery}

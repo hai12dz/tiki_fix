@@ -62,6 +62,10 @@ const ExpandableDescription = () => {
             <Button
                 type='text'
                 className="toggle-button"
+                style={{
+                    textDecoration: 'underline'
+
+                }}
                 onClick={toggleExpanded}
             >
                 {expanded ? 'Thu gọn' : 'Xem thêm'}

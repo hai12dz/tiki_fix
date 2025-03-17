@@ -261,6 +261,25 @@ const HomePage = () => {
         // Always run filterProduct whether filters are set or reset
         filterProduct();
     }, [category, brand, supplier]);
+
+
+
+    const addViewedProduct = (productId: string) => {
+        const viewedProducts = JSON.parse(localStorage.getItem("viewedProducts") || "[]").map(Number);
+
+        // Nếu sản phẩm chưa có trong danh sách thì thêm vào
+        if (!viewedProducts.includes(productId)) {
+            viewedProducts.push(productId);
+        }
+
+        // Giữ tối đa 10 sản phẩm gần nhất
+        if (viewedProducts.length > 10) {
+            viewedProducts.shift(); // Xóa sản phẩm cũ nhất
+        }
+
+        localStorage.setItem("viewedProducts", JSON.stringify(viewedProducts));
+    };
+
     return (
         <>
             <div style={{ background: '#efefef', padding: "20px 0" }}>
@@ -644,7 +663,12 @@ const HomePage = () => {
                                             filteredBooks.map((item, index) => {
                                                 return (
                                                     <div
-                                                        onClick={() => navigate(`/book/${item.id}`)}
+                                                        onClick={() => {
+                                                            navigate(`/book/${item.id}`)
+                                                            addViewedProduct(item.id)
+                                                        }
+
+                                                        }
                                                         className="column" key={`book-${index}`}>
                                                         <div className='wrapper'>
                                                             <div className='thumbnail'>
