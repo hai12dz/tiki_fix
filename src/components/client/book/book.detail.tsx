@@ -298,16 +298,23 @@ const BookDetail = (props: IProps) => {
                         </Col>
 
                     </Row>
-                    <Row gutter={[20, 20]}>
-                        <Col md={16} sm={0} xs={0}>
+
+                    <div style={{ marginTop: '20px', borderRadius: 5 }}>
+                        <Row gutter={[20, 20]}>
+                            <Col md={16} sm={0} xs={0}>
 
 
-                            <CustomerReview />
+                                <CustomerReview />
+                            </Col>
 
-                        </Col>
+
+                        </Row>
 
 
-                    </Row>
+                    </div>
+
+
+
                 </div>
 
 
