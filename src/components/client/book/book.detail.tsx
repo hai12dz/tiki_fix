@@ -161,8 +161,8 @@ const BookDetail = (props: IProps) => {
     }
 
     return (
-        <div style={{ background: '#efefef', padding: "20px 0" }}>
-            <div className='view-detail-book' style={{ maxWidth: 1440, margin: '0 auto', minHeight: "calc(100vh - 150px)" }}>
+        <div style={{ background: '#efefef', }}>
+            <div className='view-detail-book' style={{ maxWidth: 1440, padding: '20px 0', margin: '0 auto', minHeight: "calc(100vh - 150px)" }}>
                 <Breadcrumb
                     separator=">"
                     items={[
@@ -176,68 +176,81 @@ const BookDetail = (props: IProps) => {
                     ]}
                 />
 
-                <div style={{ padding: "10px", borderRadius: 5, position: 'relative' }}>
+                <div style={{ borderRadius: 5, position: 'relative' }}>
                     <Row gutter={[20, 20]}>
-                        <Col
+                        <Col md={17} sm={24}>
 
-                            md={8} sm={0} xs={0} style={{ marginRight: '10px', position: 'sticky', top: 20, height: 'fit-content', background: '#fff', }}>
-                            <ImageGallery
-                                ref={refGallery}
-                                items={imageGallery}
-                                showPlayButton={false} //hide play button
-                                showFullscreenButton={false} //hide fullscreen button
-                                renderLeftNav={() => <></>} //left arrow === <> </>
-                                renderRightNav={() => <></>}//right arrow === <> </>
-                                slideOnThumbnailOver={true}  //onHover => auto scroll images
-                                onClick={() => handleOnClickImage()}
-                            />
+                            <Row gutter={[30, 0]}> {/* Thêm Row để chứa 2 cột con */}
+                                <Col md={11} sm={24}
+
+                                    style={{
+                                        marginRight: '25px',
+                                        backgroundColor: '#fff',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        position: 'sticky',
+                                        top: 20,  // Thêm khoảng cách từ trên xuống
+                                        height: 'fit-content',
+                                        borderRadius: '10px',
+
+                                    }}>
+                                    <ImageGallery
+                                        ref={refGallery}
+                                        items={imageGallery}
+                                        showPlayButton={false}
+                                        showFullscreenButton={false}
+                                        renderLeftNav={() => <></>}
+                                        renderRightNav={() => <></>}
+                                        slideOnThumbnailOver={true}
+                                        onClick={() => handleOnClickImage()}
+                                    />
+                                </Col>
+                                <Col md={12} sm={24} style={{ borderRadius: '10px', background: '#fff', display: 'flex', flexDirection: 'column' }}>
+                                    <BookInfo currentBook={currentBook} />
+                                </Col>
+                            </Row>
+
+                            <Row style={{ marginTop: '15px' }} gutter={[20, 15]}> {/* Thêm Row để chứa 2 cột con */}
+                                <Col md={24} sm={24} style={{ borderRadius: '10px', background: '#fff', display: 'flex', flexDirection: 'column', position: 'sticky' }}>
+                                    <Row gutter={[20, 20]}>
+                                        <Col md={16} sm={0} xs={0}>
+
+
+                                            <CustomerReview />
+                                        </Col>
+
+
+                                    </Row>
+                                </Col>
+
+                            </Row>
+
                         </Col>
-                        <Col md={8} sm={0} xs={0} style={{ position: 'sticky', top: 20, height: 'fit-content', background: '#fff', }}>
-                            <BookInfo
-                                currentBook={currentBook}
-                            />
-                        </Col>
-
-                        <Col md={7} sm={24}   >
-
+                        <Col md={7} sm={24}>
                             <Col md={0} sm={24} xs={24}>
                                 <ImageGallery
                                     ref={refGallery}
                                     items={imageGallery}
-                                    showPlayButton={false} //hide play button
-                                    showFullscreenButton={false} //hide fullscreen button
-                                    renderLeftNav={() => <></>} //left arrow === <> </>
-                                    renderRightNav={() => <></>}//right arrow === <> </>
+                                    showPlayButton={false}
+                                    showFullscreenButton={false}
+                                    renderLeftNav={() => <></>}
+                                    renderRightNav={() => <></>}
                                     showThumbnails={false}
                                 />
                             </Col>
 
-                            <Col span={24}
-                                style={{
-                                    position: 'sticky',
-                                    top: 20,
-                                    height: 'fit-content',
-                                    background: '#fff',
-                                }}
-
-                            >
-
-
-
-                                <Row gutter={[8, 0]}> {/* 16px khoảng cách ngang, 0px dọc */}
-                                    <Col >
+                            <Col span={24} style={{ borderRadius: '10px', position: 'sticky', top: 20, height: 'fit-content', background: '#fff' }}>
+                                <Row gutter={[8, 0]}>
+                                    <Col>
                                         <div>
                                             <img style={{ width: '40px', height: '40px' }} src={`/images/${currentBook?.supplier?.logo}`} alt="" />
                                         </div>
                                     </Col>
                                     <Col>
-                                        <Row
-                                            style={{ marginBottom: '2px' }}
-                                        >{currentBook?.supplier.name} </Row>
+                                        <Row style={{ marginBottom: '2px' }}>{currentBook?.supplier.name}</Row>
                                         <Row>
                                             <img style={{ width: '72px', height: '20px' }} src="/images/official.png" alt="" />&nbsp; | 4.7 &nbsp; <StarFilled style={{ color: "gold" }} />
                                             &nbsp; (5,5tr+ đánh giá)
-
                                         </Row>
                                     </Col>
                                 </Row>
@@ -247,25 +260,19 @@ const BookDetail = (props: IProps) => {
                                         <div className='quantity'>
                                             <span className='left'>Số lượng</span>
                                             <span className='right'>
-                                                <button onClick={() => handleChangeButton('MINUS')} ><MinusOutlined /></button>
+                                                <button onClick={() => handleChangeButton('MINUS')}><MinusOutlined /></button>
                                                 <input onChange={(event) => handleChangeInput(event.target.value)} value={currentQuantity} />
                                                 <button onClick={() => handleChangeButton('PLUS')}><PlusOutlined /></button>
                                             </span>
                                         </div>
                                     </Col>
                                     <Col md={24}>
-                                        <div>
-                                            Tạm tính
-                                        </div>
-
+                                        <div>Tạm tính</div>
                                         <div className='price'>
-
                                             <span className='currency'>
                                                 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
                                                     Number(currentBook?.price || 0) - (Number(currentBook?.price || 0) * Number(currentBook?.promotion || 0) / 100)
                                                 )}
-
-
                                             </span>
                                         </div>
                                     </Col>
@@ -277,48 +284,23 @@ const BookDetail = (props: IProps) => {
                                             </div>
                                         </div>
                                     </Col>
-
-
-
                                     <div className='buy'>
                                         <button className='cart' onClick={() => handleAddToCart()}>
                                             <BsCartPlus className='icon-cart' />
                                             <span>Thêm vào giỏ hàng</span>
                                         </button>
-                                        <button
-                                            onClick={() => handleAddToCart(true)}
-                                            className='now'>Mua ngay</button>
+                                        <button onClick={() => handleAddToCart(true)} className='now'>Mua ngay</button>
                                     </div>
-
                                 </Row>
-
-
                             </Col>
-
                         </Col>
-
                     </Row>
 
-                    <div style={{ marginTop: '20px', borderRadius: 5 }}>
-                        <Row gutter={[20, 20]}>
-                            <Col md={16} sm={0} xs={0}>
 
-
-                                <CustomerReview />
-                            </Col>
-
-
-                        </Row>
-
-
-                    </div>
 
 
 
                 </div>
-
-
-
                 <div style={{ marginTop: '20px', borderRadius: 5 }}>
                     <Row gutter={[20, 20]}>
                         <Col md={24} sm={0} xs={0}>
