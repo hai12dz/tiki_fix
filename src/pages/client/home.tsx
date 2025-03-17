@@ -56,9 +56,9 @@ const HomePage = () => {
     const [listFullCategory, setListFullCategory] = useState<ICategory[]>([])
     const [form] = Form.useForm();
     const navigate = useNavigate();
-    const [brand, setBrand] = useState<string>("");
-    const [supplier, setSupplier] = useState<string>("");
-
+    // Change these from string to arrays
+    const [brand, setBrand] = useState<string[]>([]);
+    const [supplier, setSupplier] = useState<string[]>([]);
     const filteredBooks = useMemo(() => {
         return listBook.filter((book) =>
             book.mainText.toLowerCase().includes(searchTerm.toLowerCase())
@@ -224,7 +224,6 @@ const HomePage = () => {
         }));
     };
 
-
     const filterProduct = async () => {
         let query = `current=1&pageSize=${pageSize}`;
         let isChange: boolean = false;
@@ -234,20 +233,19 @@ const HomePage = () => {
             isChange = true;
             query += `&nameCategory=${category}`;
         }
-        if (brand && brand !== "") {
+        if (brand.length > 0) {
             isChange = true;
-            query += `&nameBrand=${brand}`;
+            query += `&nameBrand=${brand.join(',')}`;
         }
-        if (supplier && supplier !== "") {
+        if (supplier.length > 0) {
             isChange = true;
-            query += `&nameSupplier=${supplier}`;
+            query += `&nameSupplier=${supplier.join(',')}`;
         }
 
         // If any filter is applied, use the filter API
         if (isChange === true) {
             const res = await filterBookWithFullInfoAPI(query);
             setTotal(res.data!.meta.totalItems)
-
             setListBook(res.data?.items || []);
         }
         // If NO filters are applied, fetch all books
@@ -580,15 +578,15 @@ const HomePage = () => {
                                                             {listBrand.slice(0, 4).map((items, index) => (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        if (brand !== items.name) {
-                                                                            setBrand(items.name);
+                                                                        if (!brand.includes(items.name)) {
+                                                                            setBrand([...brand, items.name]);
                                                                         } else {
-                                                                            setBrand(""); // This will trigger the useEffect
+                                                                            setBrand(brand.filter(item => item !== items.name));
                                                                         }
                                                                     }}
                                                                     key={index}
-                                                                    className={`filter-button ${brand === items.name ? 'active-filter' : ''}`}
-                                                                    type={brand === items.name ? "primary" : "text"}
+                                                                    className={`filter-button ${brand.includes(items.name) ? 'active-filter' : ''}`}
+                                                                    type={brand.includes(items.name) ? "primary" : "text"}
                                                                 >
                                                                     {items.name}
                                                                 </Button>
@@ -602,15 +600,15 @@ const HomePage = () => {
                                                             {listSupplier.slice(0, 4).map((items, index) => (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        if (supplier !== items.name) {
-                                                                            setSupplier(items.name);
+                                                                        if (!supplier.includes(items.name)) {
+                                                                            setSupplier([...supplier, items.name]);
                                                                         } else {
-                                                                            setSupplier(""); // This will trigger the useEffect
+                                                                            setSupplier(supplier.filter(item => item !== items.name));
                                                                         }
                                                                     }}
                                                                     key={index}
-                                                                    className={`filter-button ${supplier === items.name ? 'active-filter' : ''}`}
-                                                                    type={supplier === items.name ? "primary" : "text"}
+                                                                    className={`filter-button ${supplier.includes(items.name) ? 'active-filter' : ''}`}
+                                                                    type={supplier.includes(items.name) ? "primary" : "text"}
                                                                 >
                                                                     {items.name}
                                                                 </Button>
@@ -706,8 +704,8 @@ const HomePage = () => {
                                                     onClick={() => {
                                                         setSearchTerm("");
                                                         setCategory("");
-                                                        setBrand(""); // Reset brand filter
-                                                        setSupplier(""); // Reset supplier filter
+                                                        setBrand([]); // Reset brand filter to empty array
+                                                        setSupplier([]); // Reset supplier filter to empty array
                                                         fetchBook();
                                                     }}
                                                     icon={<ReloadOutlined />}

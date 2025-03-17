@@ -169,13 +169,11 @@ const BookDetail = (props: IProps) => {
                         {
                             title: <Link to={"/"}>Trang Chủ</Link>,
                         },
-
                         {
                             title: 'Xem chi tiết sách',
                         },
                     ]}
                 />
-
                 <div style={{ borderRadius: 5, position: 'relative' }}>
                     <Row gutter={[20, 20]}>
                         <Col md={17} sm={24}>
@@ -295,11 +293,6 @@ const BookDetail = (props: IProps) => {
                             </Col>
                         </Col>
                     </Row>
-
-
-
-
-
                 </div>
                 <div style={{ marginTop: '20px', borderRadius: 5 }}>
                     <Row gutter={[20, 20]}>
