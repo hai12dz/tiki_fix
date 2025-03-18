@@ -96,17 +96,46 @@
                     color: #333;
                 }
 
-                span {
+                div {
                     font-size: 12px;
-                    margin-top: 4px;
                     color: #333;
+                    margin-top: 4px; // Mặc định cho các mục khác
                 }
             }
 
             .cart-item {
                 position: relative;
+
+                .badge-wrapper {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+
+                    .control-icon {
+                        margin-bottom: 2px; // Làm giỏ hàng cách xa icon một chút
+                    }
+
+                    div {
+                        margin-top: 6px; // Làm chữ "Giỏ hàng" cách icon nhiều hơn một chút
+                    }
+                }
+            }
+
+            .ant-dropdown-trigger {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .ant-avatar {
+                    margin-bottom: 2px; // Làm cho avatar "Tài khoản" gần chữ hơn
+                }
+
+                div {
+                    margin-top: 2px; // Giúp chữ "Tài khoản" gần icon hơn một chút
+                }
             }
         }
+
     }
 
     /* Categories and location */
@@ -149,6 +178,32 @@
         }
     }
 
+    .badge-wrapper {
+        position: relative;
+        display: inline-block;
+
+        .ant-badge-count {
+            position: absolute;
+            top: -5px; // Đẩy lên trên
+            right: -5px; // Đẩy qua phải
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            background-color: #ff424e;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 6px;
+        }
+
+        .control-icon {
+            font-size: 24px; // Điều chỉnh kích thước icon
+        }
+    }
+
     /* Service commitments */
     .service-commitments {
         display: flex;
@@ -186,19 +241,32 @@
             align-items: center;
             padding: 8px 0;
             border-bottom: 1px solid #eee;
+            gap: 12px; // Khoảng cách giữa các phần tử
+            justify-content: space-between; // Phân bố không gian giữa các phần tử
 
             img {
                 width: 40px;
                 height: 40px;
                 object-fit: cover;
-                margin-right: 12px;
                 border-radius: 4px;
+                flex-shrink: 0; // Giữ nguyên kích thước ảnh
+            }
+
+            .name-container {
+                flex: 1; // Để tên sách chiếm khoảng trống giữa ảnh và giá
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-right: 10px; // Thêm khoảng cách giữa name và price
             }
 
             .price {
                 color: #ff424e;
                 font-weight: bold;
-                margin-left: auto;
+                flex-shrink: 0; // Không cho giá bị thu nhỏ
+                margin-left: auto; // Đẩy price ra ngoài cùng bên phải
+                text-align: right; // Căn phải cho text bên trong
+                min-width: 80px; // Đảm bảo price có một kích thước tối thiểu
             }
         }
     }

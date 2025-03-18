@@ -18,15 +18,16 @@ const OrderDetail = (props: IProps) => {
 
     useEffect(() => {
         if (carts && carts.length > 0) {
-            let sum = 0;
-            carts.map(item => {
-                sum += item.quantity * item.detail.price;
-            })
+            const sum = carts.reduce((total, item) => {
+                const discountedPrice = item.detail.price * (1 - item.detail.promotion / 100);
+                return total + item.quantity * discountedPrice;
+            }, 0);
             setTotalPrice(sum);
         } else {
             setTotalPrice(0);
         }
     }, [carts]);
+
 
     const handleOnChangeInput = (value: number, book: IBookTable) => {
         if (!value || +value < 1) return;
@@ -39,7 +40,7 @@ const OrderDetail = (props: IProps) => {
                 const carts = JSON.parse(cartStorage) as ICart[];
 
                 //check exist
-                let isExistIndex = carts.findIndex(c => c._id === book?._id);
+                let isExistIndex = carts.findIndex(c => c._id === book?.id);
                 if (isExistIndex > -1) {
                     carts[isExistIndex].quantity = +value;
                 }
@@ -78,7 +79,11 @@ const OrderDetail = (props: IProps) => {
                 <Row gutter={[20, 20]}>
                     <Col md={18} xs={24}>
                         {carts?.map((item, index) => {
-                            const currentBookPrice = item?.detail?.price ?? 0;
+                            const currentBookPrice = item?.detail
+                                ? item.detail.price * (1 - item.detail.promotion / 100)
+                                : 0;
+
+
                             return (
                                 <div className='order-book' key={`index-${index}`}
                                     style={isMobile ? { flexDirection: 'column' } : {}}

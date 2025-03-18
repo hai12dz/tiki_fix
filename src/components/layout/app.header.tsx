@@ -7,7 +7,7 @@ import { useCurrentApp } from 'components/context/app.context';
 import { logoutAPI } from '@/services/api';
 import ManageAccount from '../client/account';
 import { isMobile } from 'react-device-detect';
-import './app.header.scss';
+import './app.new.header.scss';
 
 interface IProps {
     searchTerm: string;
@@ -66,7 +66,7 @@ const AppHeader = (props: IProps) => {
                 {carts?.map((book, index) => (
                     <div className='book' key={`book-${index}`}>
                         <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${book?.detail?.thumbnail}`} />
-                        <div>{book?.detail?.mainText}</div>
+                        <div className='name-container'>{book?.detail?.mainText}</div>
                         <div className='price'>
                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book?.detail?.price ?? 0)}
                         </div>
@@ -113,20 +113,20 @@ const AppHeader = (props: IProps) => {
                     <div className="user-controls">
                         <div className="control-item" onClick={() => navigate('/')}>
                             <HomeOutlined className="control-icon" />
-                            <span>Trang chủ</span>
+                            <div>Trang chủ</div>
                         </div>
 
                         {!isAuthenticated ? (
                             <div className="control-item" onClick={() => navigate('/login')}>
                                 <UserOutlined className="control-icon" />
-                                <span>Tài khoản</span>
+                                <div>Tài khoản</div>
                             </div>
                         ) : (
                             <Dropdown menu={{ items }} trigger={['click']} className="control-item">
-                                <Space>
+                                <div >
                                     <Avatar src={urlAvatar} size="small" />
-                                    <span>Tài khoản</span>
-                                </Space>
+                                    <div>Tài khoản</div>
+                                </div>
                             </Dropdown>
                         )}
 
@@ -139,15 +139,16 @@ const AppHeader = (props: IProps) => {
                                     content={contentPopover}
                                     trigger="click"
                                 >
-                                    <Badge count={carts?.length ?? 0} size="small" showZero>
+                                    <Badge count={carts?.length ?? 0} size="small" showZero offset={[-15, -2]} className="badge-wrapper" >
                                         <FiShoppingCart className="control-icon" />
-                                        <span>Giỏ hàng</span>
+                                        <div>Giỏ hàng</div>
                                     </Badge>
+
                                 </Popover>
                             ) : (
                                 <Badge count={carts?.length ?? 0} size="small" showZero onClick={() => navigate("/order")}>
                                     <FiShoppingCart className="control-icon" />
-                                    <span>Giỏ hàng</span>
+                                    <div>Giỏ hàng</div>
                                 </Badge>
                             )}
                         </div>
