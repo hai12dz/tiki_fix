@@ -106,6 +106,7 @@ const UserInfo = () => {
                                 icon={<AntDesignOutlined />}
                                 src={urlAvatar}
                                 shape="circle"
+
                             />
                         </Col>
                         <Col span={24}>

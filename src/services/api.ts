@@ -23,7 +23,7 @@ export const updatePaymentOrderAPI = (paymentStatus: string, paymentRef: string)
 }
 
 export const loginAPI = (username: string, password: string) => {
-    const urlBackend = "/api/v1/auth/login";
+    const urlBackend = "/auth/login";
     return axios.post<IBackendRes<ILogin>>(urlBackend, { username, password }, {
         headers: {
             delay: 1000
@@ -32,12 +32,12 @@ export const loginAPI = (username: string, password: string) => {
 }
 
 export const registerAPI = (fullName: string, email: string, password: string, phone: string) => {
-    const urlBackend = "/api/v1/user/register";
+    const urlBackend = "/auth/register";
     return axios.post<IBackendRes<IRegister>>(urlBackend, { fullName, email, password, phone })
 }
 
 export const fetchAccountAPI = () => {
-    const urlBackend = "/api/v1/auth/account";
+    const urlBackend = "/auth/account";
     return axios.get<IBackendRes<IFetchAccount>>(urlBackend, {
         headers: {
             delay: 100
@@ -46,7 +46,7 @@ export const fetchAccountAPI = () => {
 }
 
 export const logoutAPI = () => {
-    const urlBackend = "/api/v1/auth/logout";
+    const urlBackend = "/auth/logout";
     return axios.post<IBackendRes<IRegister>>(urlBackend)
 }
 
@@ -176,14 +176,14 @@ export const getHistoryAPI = () => {
 export const updateUserInfoAPI = (
     _id: string, avatar: string,
     fullName: string, phone: string) => {
-    const urlBackend = "/api/v1/user";
+    const urlBackend = "/users/update-user";
     return axios.put<IBackendRes<IRegister>>(urlBackend,
         { fullName, phone, avatar, _id })
 }
 
 export const updateUserPasswordAPI = (
     email: string, oldpass: string, newpass: string) => {
-    const urlBackend = "/api/v1/user/change-password";
+    const urlBackend = "/users/change-password";
     return axios.post<IBackendRes<IRegister>>(urlBackend,
         { email, oldpass, newpass })
 }

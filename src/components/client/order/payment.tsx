@@ -72,7 +72,7 @@ const Payment = (props: IProps) => {
         const { address, fullName, method, phone } = values;
 
         const detail = carts.map(item => ({
-            _id: item._id,
+            id: item._id,
             quantity: item.quantity,
             bookName: item.detail.mainText
         }))
@@ -83,7 +83,7 @@ const Payment = (props: IProps) => {
 
         if (method === "COD") {
             res = await createOrderAPI(
-                fullName, address, phone, totalPrice, method, detail
+                fullName, address, phone, totalPrice, method, detail, "Không có"
             );
         } else {
             res = await createOrderAPI(
@@ -96,23 +96,8 @@ const Payment = (props: IProps) => {
         if (res?.data) {
             localStorage.removeItem("carts");
             setCarts([]);
-            if (method === "COD") {
-                message.success('Mua hàng thành công!');
-                setCurrentStep(2);
-            } else {
-                //redirect to vnpay
-                const r = await getVNPayUrlAPI(totalPrice, "vn", paymentRef);
-                if (r.data) {
-                    window.location.href = r.data.url;
-                } else {
-                    notification.error({
-                        message: "Có lỗi xảy ra",
-                        description:
-                            r.message && Array.isArray(r.message) ? r.message[0] : r.message,
-                        duration: 5
-                    })
-                }
-            }
+            message.success('Mua hàng thành công!');
+            setCurrentStep(2);
 
         } else {
             notification.error({
@@ -209,7 +194,7 @@ const Payment = (props: IProps) => {
                                 <Radio.Group>
                                     <Space direction="vertical">
                                         <Radio value={"COD"}>Thanh toán khi nhận hàng</Radio>
-                                        <Radio value={"BANKING"}>Thanh toán bằng ví VNPAY</Radio>
+                                        <Radio value={"BANKING"}>Thanh toán bằng chuyển khoản</Radio>
                                     </Space>
                                 </Radio.Group>
                             </Form.Item>

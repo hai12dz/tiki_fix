@@ -372,7 +372,7 @@ const HomePage = () => {
 
                             <div style={{ marginTop: '10px' }}>
                                 <div>
-                                    <Image src="/images/qc1.png" alt="QC1" style={{ width: '100%', height: 'auto', objectFit: "cover" }} />
+                                    <Image src="/images/qc1.png" alt="QC1" style={{ borderRadius: "10px", width: '100%', height: 'auto', objectFit: "cover" }} />
                                 </div>
 
                                 <div className="promo-container">
@@ -439,24 +439,25 @@ const HomePage = () => {
 
                                             width: '100%',
 
+
                                             marginBottom: '20px', // Tạo khoảng cách giữa phần nền xám phía trên và nội dung bên dưới
                                         }}>
                                         <Carousel arrows infinite={true}>
                                             <div className="carousel-slide">
-                                                <img src="/images/slide1.png" alt="Slide 1" />
-                                                <img src="/images/slide2.png" alt="Slide 2" />
+                                                <img style={{ borderRadius: '10px', }} src="/images/slide1.png" alt="Slide 1" />
+                                                <img style={{ borderRadius: '10px', }} src="/images/slide2.png" alt="Slide 2" />
                                             </div>
                                             <div className="carousel-slide">
-                                                <img src="/images/slide3.png" alt="Slide 3" />
-                                                <img src="/images/slide4.png" alt="Slide 4" />
+                                                <img style={{ borderRadius: '10px', }} src="/images/slide3.png" alt="Slide 3" />
+                                                <img style={{ borderRadius: '10px', }} src="/images/slide4.png" alt="Slide 4" />
                                             </div>
                                             <div className="carousel-slide">
-                                                <img src="/images/slide5.png" alt="Slide 5" />
-                                                <img src="/images/slide6.png" alt="Slide 6" />
+                                                <img style={{ borderRadius: '10px', }} src="/images/slide5.png" alt="Slide 5" />
+                                                <img style={{ borderRadius: '10px', }} src="/images/slide6.png" alt="Slide 6" />
                                             </div>
                                             <div className="carousel-slide">
-                                                <img src="/images/slide7.png" alt="Slide 7" />
-                                                <img src="/images/slide8.png" alt="Slide 8" />
+                                                <img style={{ borderRadius: '10px', }} src="/images/slide7.png" alt="Slide 7" />
+                                                <img style={{ borderRadius: '10px', }} src="/images/slide8.png" alt="Slide 8" />
                                             </div>
                                         </Carousel>
                                     </div>
@@ -730,7 +731,7 @@ const HomePage = () => {
                             </Spin>
 
                             <Row>
-                                <div style={{ width: '100%', marginTop: '30px', padding: '10px', background: 'white' }}>
+                                <div style={{ borderRadius: '10px', width: '100%', marginTop: '30px', padding: '10px', background: 'white' }}>
 
                                     <div>
                                         <h2>Sản Phẩm Đề Xuất</h2>
@@ -777,11 +778,12 @@ const HomePage = () => {
 
 
                         <div style={{
+                            borderRadius: '15px',
                             marginTop: '10px',
                             width: '100%',
                             backgroundColor: 'white',
-                            borderRadius: '5px',
                             boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+
                         }}>
                             <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                 <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1A94FF', margin: 0 }}>SÁCH HAY TIKI KHUYÊN ĐỌC</h2>
@@ -877,7 +879,11 @@ const HomePage = () => {
                         </div>
                         <div>
                             <Image
-                                style={{ width: "100%" }}
+                                style={{
+                                    borderRadius: '20px',
+                                    width: "100%"
+                                }}
+
                                 src="/images/footer.png"
                             />
                         </div>
@@ -888,7 +894,7 @@ const HomePage = () => {
                             backgroundColor: 'white',
                             padding: '20px',
                             marginBottom: '20px',
-                            borderRadius: '5px'
+                            borderRadius: '15px'
                         }}>
                             <h2 style={{ borderBottom: '1px solid #efefef', paddingBottom: '10px', fontSize: '22px', fontWeight: 'bold' }}>Thông Tin Danh Mục</h2>
 
@@ -920,6 +926,7 @@ const HomePage = () => {
                             <div className='res-footerqq'>
                                 <figure>
                                     <img
+
                                         src="/images/footerqq.png"
                                         alt="QC1"
                                         width="100%"
