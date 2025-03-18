@@ -1,0 +1,274 @@
+/* app.header.scss */
+
+/* Promo banner */
+.promo-banner {
+    background-color: #e5f2e8;
+    color: #009940;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 14px;
+    width: 100%;
+
+    strong {
+        font-weight: bold;
+        color: #009940;
+    }
+}
+
+/* Main header container */
+.header-container {
+    width: 100%;
+    background-color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    /* Main header with logo, search, and user controls */
+    .main-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1270px;
+        margin: 0 auto;
+        padding: 16px 12px;
+
+        /* Logo */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            min-width: 120px;
+
+            img {
+                width: 60px;
+                height: auto;
+            }
+
+            .slogan {
+                color: #1a94ff;
+                font-size: 12px;
+                margin-top: 4px;
+            }
+        }
+
+        /* Search */
+        .search-container {
+            display: flex;
+            flex: 1;
+            max-width: 600px;
+            margin: 0 24px;
+
+            .search-input {
+                width: 100%;
+                border-radius: 4px 0 0 4px;
+                border-right: none;
+                height: 40px;
+            }
+
+            .search-button {
+                height: 40px;
+                background-color: #1a94ff;
+                color: white;
+                border: none;
+                border-radius: 0 4px 4px 0;
+                padding: 0 16px;
+                cursor: pointer;
+                font-weight: 500;
+
+                &:hover {
+                    background-color: #0d84e8;
+                }
+            }
+        }
+
+        /* User controls */
+        .user-controls {
+            display: flex;
+            align-items: center;
+
+            .control-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-left: 24px;
+                cursor: pointer;
+
+                .control-icon {
+                    font-size: 20px;
+                    color: #333;
+                }
+
+                span {
+                    font-size: 12px;
+                    margin-top: 4px;
+                    color: #333;
+                }
+            }
+
+            .cart-item {
+                position: relative;
+            }
+        }
+    }
+
+    /* Categories and location */
+    .categories-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1270px;
+        margin: 0 auto;
+        padding: 8px 12px;
+        border-top: 1px solid #f1f1f1;
+
+        .categories {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+
+            &::-webkit-scrollbar {
+                height: 0;
+                display: none;
+            }
+
+            .category-link {
+                padding: 4px 10px;
+                color: #333;
+                text-decoration: none;
+                font-size: 13px;
+                white-space: nowrap;
+
+                &:hover {
+                    color: #1a94ff;
+                }
+            }
+        }
+
+        .location {
+            font-size: 13px;
+            color: #333;
+            white-space: nowrap;
+        }
+    }
+
+    /* Service commitments */
+    .service-commitments {
+        display: flex;
+        justify-content: center;
+        padding: 8px 0;
+        border-top: 1px solid #f1f1f1;
+        border-bottom: 1px solid #f1f1f1;
+        background-color: #fff;
+
+        .commitment-item {
+            display: flex;
+            align-items: center;
+            margin: 0 16px;
+            font-size: 13px;
+            color: #333;
+
+            img {
+                height: 16px;
+                width: auto;
+                margin-right: 4px;
+            }
+        }
+    }
+}
+
+/* Cart popover */
+.pop-cart-body {
+    min-width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+
+    .pop-cart-content {
+        .book {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+
+            img {
+                width: 40px;
+                height: 40px;
+                object-fit: cover;
+                margin-right: 12px;
+                border-radius: 4px;
+            }
+
+            .price {
+                color: #ff424e;
+                font-weight: bold;
+                margin-left: auto;
+            }
+        }
+    }
+
+    .pop-cart-footer {
+        margin-top: 12px;
+        text-align: center;
+
+        button {
+            background-color: #1a94ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: 500;
+
+            &:hover {
+                background-color: #0d84e8;
+            }
+        }
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .header-container {
+        .main-header {
+            flex-direction: column;
+
+            .logo-container {
+                margin-bottom: 12px;
+            }
+
+            .search-container {
+                width: 100%;
+                max-width: none;
+                margin: 12px 0;
+            }
+
+            .user-controls {
+                width: 100%;
+                justify-content: space-around;
+                margin-top: 12px;
+            }
+        }
+
+        .categories-container {
+            flex-direction: column;
+
+            .categories {
+                width: 100%;
+                overflow-x: auto;
+                margin-bottom: 8px;
+            }
+
+            .location {
+                align-self: flex-end;
+            }
+        }
+
+        .service-commitments {
+            overflow-x: auto;
+            justify-content: flex-start;
+            padding: 8px 12px;
+
+            .commitment-item {
+                margin: 0 12px;
+                white-space: nowrap;
+            }
+        }
+    }
+}

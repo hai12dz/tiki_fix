@@ -1,19 +1,13 @@
-import { useState, useMemo } from 'react';
-import { FaReact } from 'react-icons/fa';
+import { useState } from 'react';
+import { SearchOutlined, HomeOutlined, UserOutlined, EnvironmentOutlined } from '@ant-design/icons';
+import { Badge, Popover, Empty, message, Input, Dropdown, Space, Avatar } from 'antd';
 import { FiShoppingCart } from 'react-icons/fi';
-import { VscSearchFuzzy } from 'react-icons/vsc';
-import { Divider, Badge, Drawer, Avatar, Popover, Empty, message } from 'antd';
-import { Dropdown, Space } from 'antd';
-import { useNavigate } from 'react-router';
-import './app.header.scss';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useCurrentApp } from 'components/context/app.context';
 import { logoutAPI } from '@/services/api';
 import ManageAccount from '../client/account';
 import { isMobile } from 'react-device-detect';
-import { HomeOutlined, SmileOutlined } from '@ant-design/icons';
-
-
+import './app.header.scss';
 
 interface IProps {
     searchTerm: string;
@@ -21,7 +15,6 @@ interface IProps {
 }
 
 const AppHeader = (props: IProps) => {
-    const [openDrawer, setOpenDrawer] = useState(false);
     const [openManageAccount, setOpenManageAccount] = useState<boolean>(false);
 
     const {
@@ -67,8 +60,6 @@ const AppHeader = (props: IProps) => {
 
     const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
 
-
-
     const contentPopover = () => (
         <div className='pop-cart-body'>
             <div className='pop-cart-content'>
@@ -94,91 +85,112 @@ const AppHeader = (props: IProps) => {
 
     return (
         <>
-            <div className='header-container'>
-                <header className="page-header">
-                    <div className="page-header__top">
-                        <div className="page-header__toggle" onClick={() => setOpenDrawer(true)}>☰</div>
-                        <div className='page-header__logo'>
-                            <span className='logo' onClick={() => navigate('/')}>
-                                <FaReact className='rotate icon-react' />Hải Đào IT
-                            </span>
-                            <VscSearchFuzzy className='icon-search' />
-                        </div>
-
-                        {/* ✅ Ô tìm kiếm */}
-                        <div className="search-container">
-                            <input
-                                className="input-search"
-                                type={'text'}
-                                placeholder="Bạn tìm gì hôm nay"
-                                value={props.searchTerm}
-                                onChange={(e) => props.setSearchTerm(e.target.value)}
-                            />
-
-                        </div>
-                    </div>
-
-                    <nav className="page-header__bottom">
-                        <ul id="navigation" className="navigation">
-                            <li className="navigation__item">
-                                {!isMobile ?
-                                    <Popover
-                                        className="popover-carts"
-                                        placement="topRight"
-                                        rootClassName="popover-carts"
-                                        title={"Sản phẩm mới thêm"}
-                                        content={contentPopover}
-                                        arrow={true}
-                                    >
-                                        <Badge count={carts?.length ?? 0} size={"small"} showZero>
-                                            <FiShoppingCart className='icon-cart' />
-                                        </Badge>
-                                    </Popover>
-                                    :
-                                    <Badge count={carts?.length ?? 0} size={"small"} showZero onClick={() => navigate("/order")}>
-                                        <FiShoppingCart className='icon-cart' />
-                                    </Badge>
-                                }
-                            </li>
-                            <li className="navigation__item mobile"><Divider type='vertical' /></li>
-                            <li className="navigation__item mobile">
-                                {!isAuthenticated ?
-                                    (<div >
-
-                                        <span
-                                            style={{ marginRight: '10px' }}
-                                            onClick={() => navigate('/')}><HomeOutlined /> Trang chủ</span>
-                                        <span onClick={() => navigate('/login')}><SmileOutlined /> Tài Khoản</span>
-
-
-                                    </div>
-
-                                    )
-                                    :
-                                    <Dropdown menu={{ items }} trigger={['click']}>
-                                        <Space>
-                                            <Avatar src={urlAvatar} />
-                                            {user?.fullName}
-                                        </Space>
-                                    </Dropdown>
-                                }
-                            </li>
-                        </ul>
-                    </nav>
-                </header>
+            {/* Promo banner */}
+            <div className="promo-banner">
+                <span>Freeship đơn từ 45k, giảm nhiều hơn cùng <strong>FREESHIP XTRA</strong></span>
             </div>
 
-            <Drawer
-                title="Menu chức năng"
-                placement="left"
-                onClose={() => setOpenDrawer(false)}
-                open={openDrawer}
-            >
-                <p>Quản lý tài khoản</p>
-                <Divider />
-                <p onClick={() => handleLogout()}>Đăng xuất</p>
-                <Divider />
-            </Drawer>
+            {/* Main header */}
+            <div className="header-container">
+                {/* Logo, search and user controls */}
+                <div className="main-header">
+                    <div className="logo-container" onClick={() => navigate('/')}>
+                        <img style={{ width: '96px', height: '40px' }} src="/images/logotiki.png" alt="Tiki Logo" />
+                        <span className="slogan">Tốt & Nhanh</span>
+                    </div>
+
+                    <div className="search-container">
+                        <Input
+                            className="search-input"
+                            prefix={<SearchOutlined />}
+                            placeholder="Freeship đơn từ 45k"
+                            value={props.searchTerm}
+                            onChange={(e) => props.setSearchTerm(e.target.value)}
+                        />
+                        <button className="search-button">Tìm kiếm</button>
+                    </div>
+
+                    <div className="user-controls">
+                        <div className="control-item" onClick={() => navigate('/')}>
+                            <HomeOutlined className="control-icon" />
+                            <span>Trang chủ</span>
+                        </div>
+
+                        {!isAuthenticated ? (
+                            <div className="control-item" onClick={() => navigate('/login')}>
+                                <UserOutlined className="control-icon" />
+                                <span>Tài khoản</span>
+                            </div>
+                        ) : (
+                            <Dropdown menu={{ items }} trigger={['click']} className="control-item">
+                                <Space>
+                                    <Avatar src={urlAvatar} size="small" />
+                                    <span>Tài khoản</span>
+                                </Space>
+                            </Dropdown>
+                        )}
+
+                        <div className="control-item cart-item">
+                            {!isMobile ? (
+                                <Popover
+                                    className="popover-carts"
+                                    placement="bottomRight"
+                                    title="Sản phẩm mới thêm"
+                                    content={contentPopover}
+                                    trigger="click"
+                                >
+                                    <Badge count={carts?.length ?? 0} size="small" showZero>
+                                        <FiShoppingCart className="control-icon" />
+                                        <span>Giỏ hàng</span>
+                                    </Badge>
+                                </Popover>
+                            ) : (
+                                <Badge count={carts?.length ?? 0} size="small" showZero onClick={() => navigate("/order")}>
+                                    <FiShoppingCart className="control-icon" />
+                                    <span>Giỏ hàng</span>
+                                </Badge>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Categories */}
+                <div className="categories-container">
+                    <div className="categories">
+                        <Link to="#" className="category-link">điện gia dụng</Link>
+                        <Link to="#" className="category-link">xe cộ</Link>
+                        <Link to="#" className="category-link">mẹ & bé</Link>
+                        <Link to="#" className="category-link">khỏe đẹp</Link>
+                        <Link to="#" className="category-link">nhà cửa</Link>
+                        <Link to="#" className="category-link">sách</Link>
+                        <Link to="#" className="category-link">thể thao</Link>
+                        <Link to="#" className="category-link">harry potter</Link>
+                        <Link to="#" className="category-link">suối nguồn</Link>
+                        <Link to="#" className="category-link">trái đất chuyện mình</Link>
+                    </div>
+                    <div className="location">
+
+
+                        <EnvironmentOutlined style={{ marginRight: 5 }} />
+                        Giao đến:&nbsp;&nbsp;
+                        <span style={{ fontWeight: "bold", textDecoration: "underline" }}>
+                            Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội
+                        </span>
+
+                    </div>
+                </div>
+
+                {/* Service commitments */}
+                <div className="service-commitments">
+                    <div className="commitment-item">Cam kết</div>
+                    <div className="commitment-item"><img src="/images/hangthat.png" alt="" /> 100% hàng thật</div>
+                    <div className="commitment-item"><img src="/images/freemoidon.png" alt="" /> Freeship mọi đơn</div>
+                    <div className="commitment-item"><img src="/images/hoanhang.png" alt="" /> Hoàn 200% nếu hàng giả</div>
+                    <div className="commitment-item"><img src="/images/doitra30ngay.png" alt="" /> 30 ngày đổi trả</div>
+                    <div className="commitment-item"><img src="/images/giaonhanh24h.png" alt="" /> Giao nhanh 2h</div>
+                    <div className="commitment-item"><img src="/images/giasieure.png" alt="" /> Giá siêu rẻ</div>
+                </div>
+            </div>
 
             <ManageAccount isModalOpen={openManageAccount} setIsModalOpen={setOpenManageAccount} />
         </>
