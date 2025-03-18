@@ -647,14 +647,7 @@ const HomePage = () => {
                                             onChange={(value) => { setSortQuery(value) }}
                                             style={{ overflowX: "auto" }}
                                         />
-                                        <Col xs={24} md={0}>
-                                            <div style={{ marginBottom: 20 }} >
-                                                <span onClick={() => setShowMobileFilter(true)}>
-                                                    <FilterTwoTone />
-                                                    <span style={{ fontWeight: 500 }}> Lọc</span>
-                                                </span>
-                                            </div>
-                                        </Col>
+
                                     </Row>
 
                                     <Row className='customize-row'>
