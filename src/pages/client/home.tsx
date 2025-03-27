@@ -39,9 +39,9 @@ const HomePage = () => {
     }[]>([]);
 
     const [listBook, setListBook] = useState<IBookTable[]>([]);
-    const [current, setCurrent] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(10);
     const [total, setTotal] = useState<number>(0);
+    const [current, setCurrent] = useState<number>(1);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [filter, setFilter] = useState<string>("");

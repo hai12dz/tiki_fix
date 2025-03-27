@@ -10,7 +10,7 @@ dns.setDefaultResultOrder('verbatim')
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   server: {
-    port: 3000,
+    port: 3001,
   },
   css: {
     preprocessorOptions: {

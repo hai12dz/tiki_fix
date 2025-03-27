@@ -86,7 +86,7 @@ export const deleteUserAPI = (_id: string) => {
 
 
 export const getBooksAPI = (query: string) => {
-    const urlBackend = `/api/v1/book?${query}`;
+    const urlBackend = `/products/books?${query}`;
     return axios.get<IBackendRes<IModelPaginate<IBookTable>>>(urlBackend,
         {
             headers: {
@@ -97,7 +97,7 @@ export const getBooksAPI = (query: string) => {
 }
 
 export const getCategoryAPI = () => {
-    const urlBackend = `/api/v1/database/category`;
+    const urlBackend = `/categories/name`;
     return axios.get<IBackendRes<string[]>>(urlBackend);
 }
 
@@ -123,7 +123,7 @@ export const createBookAPI = (
     price: number, quantity: number, category: string,
     thumbnail: string, slider: string[]
 ) => {
-    const urlBackend = "/api/v1/book";
+    const urlBackend = "/products/books";
     return axios.post<IBackendRes<IRegister>>(urlBackend,
         { mainText, author, price, quantity, category, thumbnail, slider })
 }
@@ -147,7 +147,7 @@ export const deleteBookAPI = (_id: string) => {
 }
 
 export const getBookByIdAPI = (id: string) => {
-    const urlBackend = `/api/v1/book/${id}`;
+    const urlBackend = `/products/books/${id}`;
     return axios.get<IBackendRes<IBookTable>>(urlBackend,
         {
             headers: {
@@ -163,7 +163,7 @@ export const createOrderAPI = (
     type: string, detail: any,
     paymentRef?: string
 ) => {
-    const urlBackend = "/api/v1/order";
+    const urlBackend = "/orders";
     return axios.post<IBackendRes<IRegister>>(urlBackend,
         { name, address, phone, totalPrice, type, detail, paymentRef })
 }
@@ -205,14 +205,14 @@ export const getDashboardAPI = () => {
 
 
 export const getNameCategoryAPI = (query: string) => {
-    const urlBackend = `/api/v1/database/name-category?${query}`;
+    const urlBackend = `/categories/info?${query}`;
     return axios.get<IBackendRes<string[]>>(urlBackend)
 }
 
 
 
 export const getBrandsAPI = () => {
-    const urlBackend = `/api/v1/brand/name-brand`;
+    const urlBackend = `/brand/name`;
     return axios.get<IBackendRes<IBrands[]>>(urlBackend)
 
 
@@ -236,7 +236,7 @@ export const filterBookAPI = (query: string) => {
 
 
 export const getFullCategories = () => {
-    const urlBackend = `/api/v1/database/fullCategory`
+    const urlBackend = `/categories/full`
     return axios.get<IBackendRes<ICategory[]>>(urlBackend)
 
 
@@ -246,14 +246,14 @@ export const getFullCategories = () => {
 
 
 export const filterBookWithFullInfoAPI = (query: string) => {
-    const urlBackend = `/api/v1/filterBook?${query}`;
+    const urlBackend = `/products/books/filter?${query}`;
     return axios.get<IBackendRes<IModelPaginate<IBookTable>>>(urlBackend)
 
 }
 
 
 export const fetchViewedProductsAPI = (viewedProducts: any) => {
-    const urlBackend = `/api/v1/viewed`;
+    const urlBackend = `/products/viewed`;
     return axios.post<IBackendRes<IBookTable[]>>(urlBackend,
         {
             productIds: viewedProducts,
